@@ -7,8 +7,8 @@ export default class Profile extends Component {
       <View>
         <Text>Profile</Text>
         <Button
-          title="Home"
-          onPress={() => this.props.navigation.navigate('Home')}
+          title="User Preferences"
+          onPress={() => this.props.navigation.navigate('UserPreferencesOnboarding')}
         />
       </View>
     )
