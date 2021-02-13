@@ -3,7 +3,6 @@ import {View, Text, StyleSheet, Image, ScrollView} from 'react-native';
 import Navigation from './Navigation';
 
 export default class Profile extends Component {
-<<<<<<< HEAD
   render() {
     return (
       <View>
@@ -15,7 +14,6 @@ export default class Profile extends Component {
       </View>
     )
   }
-=======
     constructor(props) {
         super(props);
         this.state = {
@@ -40,7 +38,17 @@ export default class Profile extends Component {
             </View>
         )
     }
->>>>>>> 28431c2f3e8eeff50a213841c12e7f92f79a714d
+  render() {
+    return (
+      <View>
+        <Text>Profile</Text>
+        <Button
+          title="User Preferences"
+          onPress={() => this.props.navigation.navigate('UserPreferencesOnboarding')}
+        />
+      </View>
+    )
+  }
 }
 
 
