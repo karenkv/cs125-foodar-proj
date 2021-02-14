@@ -6,12 +6,23 @@ import SwipeCards from "react-native-swipe-cards-deck";
 class Card extends React.Component {
   constructor(props) {
     super(props);
+    console.log(this.props);
   }
 
   render() {
     return (
-      <View style={[styles.card, {backgroundColor: this.props.backgroundColor}]}>
-        <Text>{this.props.Text}</Text>
+      <View style={styles.card}>
+        <Image 
+          style={styles.thumbnail}
+          source={{uri:"https://media.giphy.com/media/GfXFVHUzjlbOg/giphy.gif"}}
+        />
+        <Text style={styles.cardText}>{this.props.text}</Text>
+        <View style={{flex:1, flexDirection:"row", position:"absolute", bottom:5}}>
+          <Button title='💔' // TODO: fix dislike button onPress
+            onPress={() => {this.props.swiper._forceSwipeLeft()}}/>
+          <Button title='❤️' // TODO: fix like button onPress
+            onPress={() => {this.props.swiper._forceSwipeRight()}}/>
+        </View>
       </View>
     )
   }
@@ -38,14 +49,14 @@ class NoMoreCards extends Component {
 export default class UserPreferencesOnboarding extends Component {
   constructor(props) {
     super(props);
-    bgColor = "white";
     const foodPrefOptions = [
-      { text: "Dairy", backgroundColor: bgColor },
-      { text: "Low-Carb", backgroundColor: bgColor },
-      { text: "Seafood", backgroundColor: bgColor },
-      { text: "Red Meat", backgroundColor: bgColor },
-      { text: "Vegetarian", backgroundColor: bgColor },
-      { text: "Vegan", backgroundColor: bgColor },
+      { text: "Dairy", },
+      { text: "Nuts", },
+      { text: "Low-Carb", },
+      { text: "Seafood", }, 
+      { text: "Red Meat", },
+      { text: "Vegetarian", },
+      { text: "Vegan", },
     ];
     this.state = {
       cards: foodPrefOptions
@@ -68,12 +79,9 @@ export default class UserPreferencesOnboarding extends Component {
         <Text style={styles.title}>Eating habits</Text>
         <SwipeCards
           cards={this.state.cards}
-          renderCard={(cardData) => <Card {...cardData} />}
+          renderCard={(cardData) => <Card swiper={this.swiper} {...cardData} />}
           keyExtractor={(cardData) => String(cardData.text)}
           renderNoMoreCards={() => <NoMoreCards {...this.props} />}
-          stack={true}
-          stackDepth={3}
-          stackOffsetX={10}
           showYup={true}
           showNope={true}
           handleYup={this.handleYup}
@@ -111,15 +119,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignContent: "center",
     alignItems: "center",
+    backgroundColor: "white",
+    borderRadius: 15,
+    overflow: "hidden",
     width: 300,
     height: 400,
   },
-  cardsText: {
+  cardText: {
     fontSize: 22,
     color: "black",
+    alignSelf: "center",
   },
-  noMoreCardsText: {
-    fontSize: 46,
+  NoMoreCards: {
+    color: "#f8f8ff",
+    fontSize: 28,
   },
   yup: {
     borderColor: "transparent",
