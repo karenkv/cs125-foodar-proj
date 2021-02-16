@@ -11,26 +11,38 @@ export default class Search extends Component {
 
     render() {
         return (
-            <>
-            <View>
-                <Text style={styles.header}>recommend</Text>
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <Text style={styles.headerText}>search</Text>
+                    <Image source={require('../assets/divider.png')}/>
+                </View>
+                <View style={styles.body}>
+                </View>
+                <View style={styles.footer}>
+                    <Navigation navigation={this.props.navigation}/>
+                </View>
             </View>
-            <View>
-                <Image source={require('../assets/divider.png')}/>
-            </View>
-            <View>
-                <Navigation navigation={this.props.navigation}/>
-            </View>
-            </>
         )
     }
 }
 
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1
+    },
     header: {
+        flex: 0.1
+    },
+    headerText: {
         color: '#D22624',
         fontSize: 53,
         fontWeight: 'bold',
+    },
+    body: {
+        flex: 0.8
+    },
+    footer: {
+        flex: 0.1
     }
 });
