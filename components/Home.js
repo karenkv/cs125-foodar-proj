@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {View, Text, StyleSheet, Image, ScrollView} from 'react-native';
 import Navigation from './Navigation';
 
 export default class Home extends Component {
@@ -17,6 +17,9 @@ export default class Home extends Component {
                     <Image source={require('../assets/divider.png')}/>
                 </View>
                 <View style={styles.body}>
+                    <ScrollView>
+                        
+                    </ScrollView>
                 </View>
                 <View style={styles.footer}>
                     <Navigation navigation={this.props.navigation}/>
@@ -29,10 +32,13 @@ export default class Home extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
+        backgroundColor: "#FAF9F5"
     },
     header: {
-        flex: 0.1
+        flex: 0.1,
+        top: 30,
+        left: 20
     },
     headerText: {
         color: '#D22624',

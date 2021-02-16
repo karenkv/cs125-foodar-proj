@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {View, Text, StyleSheet, Image, ScrollView, TextInput} from 'react-native';
 import Navigation from './Navigation';
 
 export default class Search extends Component {
@@ -13,10 +13,14 @@ export default class Search extends Component {
         return (
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.headerText}>search</Text>
+                    <Text style={styles.headerText}>recommend</Text>
                     <Image source={require('../assets/divider.png')}/>
                 </View>
                 <View style={styles.body}>
+                    {/* <TextInput
+                        style={styles.searchBar}
+                        value="search"
+                    /> */}
                 </View>
                 <View style={styles.footer}>
                     <Navigation navigation={this.props.navigation}/>
@@ -29,10 +33,13 @@ export default class Search extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
+        backgroundColor: "#FAF9F5"
     },
     header: {
-        flex: 0.1
+        flex: 0.1,
+        top: 30,
+        left: 20
     },
     headerText: {
         color: '#D22624',
@@ -44,5 +51,8 @@ const styles = StyleSheet.create({
     },
     footer: {
         flex: 0.1
+    },
+    searchBar: {
+
     }
 });
