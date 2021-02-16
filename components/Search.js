@@ -6,11 +6,6 @@ export default class Search extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            icons: [
-                {id: 'Home', src:require('../assets/home.png')},
-                {id: 'Search', src:require('../assets/search.png')},
-                {id: 'Profile', src:require('../assets/profile.png')},
-            ]
         };
       }
 

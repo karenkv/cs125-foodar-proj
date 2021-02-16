@@ -1,38 +1,37 @@
 import React, { Component } from 'react';
-import {View, StyleSheet, Image, FlatList, TouchableHighlight} from 'react-native';
+import {View, StyleSheet, Image, TouchableHighlight} from 'react-native';
 
 export default class Navigation extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            icons: [
-                {id: 'Home', src:require('../assets/home.png')},
-                {id: 'Search', src:require('../assets/search.png')},
-                {id: 'Profile', src:require('../assets/profile.png')},
-            ]
         };
       }
 
     render() {
         return (
-            <View>
-                <FlatList
-                    horizontal={true} 
-                    showsHorizontalScrollIndicator={false} 
-                    data={this.state.icons}
-                    renderItem={({item}) => (
-                        <View style={styles.icon}>
-                            <TouchableHighlight
-                                activeOpacity={0.6}
-                                underlayColor="#DDDDDD"
-                                onPress={() => this.props.navigation.navigate(item.id)}
-                            >
-                                <Image source={item.src}/>
-                            </TouchableHighlight>
-                        </View>
-                    )}
-                    keyExtractor={(item) => item.id}
-                />
+            <View style={styles.icons}>
+                <TouchableHighlight
+                    activeOpacity={0.6}
+                    underlayColor="#DDDDDD"
+                    onPress={() => this.props.navigation.navigate('Home')}
+                >
+                    <Image source={require('../assets/home.png')}/>
+                </TouchableHighlight>
+                <TouchableHighlight
+                    activeOpacity={0.6}
+                    underlayColor="#DDDDDD"
+                    onPress={() => this.props.navigation.navigate('Search')}
+                >
+                    <Image source={require('../assets/search.png')}/>
+                </TouchableHighlight>
+                <TouchableHighlight
+                    activeOpacity={0.6}
+                    underlayColor="#DDDDDD"
+                    onPress={() => this.props.navigation.navigate('Profile')}
+                >
+                    <Image source={require('../assets/profile.png')} style={styles.icon}/>
+                </TouchableHighlight>
             </View>
         )
     }
@@ -40,7 +39,13 @@ export default class Navigation extends Component {
 
 
 const styles = StyleSheet.create({
+    icons: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+    },
     icon: {
-        flexWrap: "wrap"
+        height: 35,
+        width: 35
     }
 });
