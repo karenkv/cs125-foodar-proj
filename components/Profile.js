@@ -1,15 +1,11 @@
 import React, { Component } from 'react';
-import {View, Text, StyleSheet, Image, FlatList, TouchableHighlight} from 'react-native';
+import {View, Text, StyleSheet, Image} from 'react-native';
+import Navigation from './Navigation';
 
 export default class Profile extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            icons: [
-                {id: 'Home', src:require('../assets/home.png')},
-                {id: 'Search', src:require('../assets/search.png')},
-                {id: 'Profile', src:require('../assets/profile.png')},
-            ]
         };
       }
 
@@ -23,20 +19,7 @@ export default class Profile extends Component {
                 <Image source={require('../assets/divider.png')}/>
             </View>
             <View>
-                <FlatList
-                    horizontal={true} 
-                    showsHorizontalScrollIndicator={false} 
-                    data={this.state.icons}
-                    renderItem={({item}) => (
-                        <TouchableHighlight
-                        activeOpacity={0.6}
-                        underlayColor="#DDDDDD"
-                        onPress={() => this.props.navigation.navigate(item.id)}>
-                            <Image source={item.src}/>
-                        </TouchableHighlight>
-                    )}
-                    keyExtractor={(item) => item.id}
-                />
+                <Navigation navigation={this.props.navigation}/>
             </View>
             </>
         )
@@ -47,7 +30,7 @@ export default class Profile extends Component {
 const styles = StyleSheet.create({
     header: {
         color: '#D22624',
-        fontSize: 72,
+        fontSize: 53,
         fontWeight: 'bold',
-    }
+    },
 });
