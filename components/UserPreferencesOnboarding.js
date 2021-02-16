@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "column",
-    backgroundColor: "#F8AD9D",
+    backgroundColor: "#FAF9F5",
     alignItems: "center",
     justifyContent: "center",
   },
