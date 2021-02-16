@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {View, Text, StyleSheet, Image, FlatList, TouchableHighlight} from 'react-native';
 
-export default class Profile extends Component {
+export default class Search extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -17,7 +17,7 @@ export default class Profile extends Component {
         return (
             <>
             <View>
-                <Text style={styles.header}>profile</Text>
+                <Text style={styles.header}>search</Text>
             </View>
             <View>
                 <Image source={require('../assets/divider.png')}/>

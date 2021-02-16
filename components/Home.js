@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, FlatList } from 'react-native';
+import {View, Text, StyleSheet, Image, FlatList, TouchableHighlight} from 'react-native';
 
 export default class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
             icons: [
-                require('../assets/home.png'),
-                require('../assets/search.png'),
-                require('../assets/profile.png'),
+                {id: 'Home', src:require('../assets/home.png')},
+                {id: 'Search', src:require('../assets/search.png')},
+                {id: 'Profile', src:require('../assets/profile.png')},
             ]
         };
       }
@@ -27,8 +27,15 @@ export default class Home extends Component {
                     horizontal={true} 
                     showsHorizontalScrollIndicator={false} 
                     data={this.state.icons}
-                    renderItem={({item}) => (<Image source={item}/>)}
-                    keyExtractor={(index) => index.toString()}
+                    renderItem={({item}) => (
+                        <TouchableHighlight
+                        activeOpacity={0.6}
+                        underlayColor="#DDDDDD"
+                        onPress={() => this.props.navigation.navigate(item.id)}>
+                            <Image source={item.src}/>
+                        </TouchableHighlight>
+                    )}
+                    keyExtractor={(item) => item.id}
                 />
             </View>
             </>
