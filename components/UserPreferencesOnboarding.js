@@ -1,3 +1,5 @@
+'use strict';
+
 import React, { Component } from 'react';
 import { Image, Button, View, Text, StyleSheet } from 'react-native';
 
@@ -14,7 +16,7 @@ class Card extends React.Component {
       <View style={styles.card}>
         <Image 
           style={styles.thumbnail}
-          source={{uri:"https://media.giphy.com/media/GfXFVHUzjlbOg/giphy.gif"}}
+          source={{uri: "https://media.giphy.com/media/GfXFVHUzjlbOg/giphy.gif"}}
         />
         <Text style={styles.cardText}>{this.props.text}</Text>
         <View style={{flex:1, flexDirection:"row", position:"absolute", bottom:5}}>
@@ -78,6 +80,7 @@ export default class UserPreferencesOnboarding extends Component {
       <View style={styles.container}>
         <Text style={styles.title}>Eating habits</Text>
         <SwipeCards
+          ref={(swiper) => this.swiper = swiper}
           cards={this.state.cards}
           renderCard={(cardData) => <Card swiper={this.swiper} {...cardData} />}
           keyExtractor={(cardData) => String(cardData.text)}
@@ -126,7 +129,7 @@ const styles = StyleSheet.create({
     height: 400,
   },
   cardText: {
-    fontSize: 22,
+    fontSize: 24,
     color: "black",
     alignSelf: "center",
   },
@@ -142,7 +145,7 @@ const styles = StyleSheet.create({
     right: 0,
   },
   yupText: {
-    fontSize: 18,
+    fontSize: 20,
     color: "#f8f8ff",
   },
   nope: {
@@ -153,7 +156,11 @@ const styles = StyleSheet.create({
     left: 0,
   },
   nopeText: {
-    fontSize: 18,
+    fontSize: 20,
     color: "#f8f8ff",
+  },
+  thumbnail: {
+    width: 250,
+    height: 250,
   },
 });
