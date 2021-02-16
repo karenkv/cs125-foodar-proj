@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import {View, Text, StyleSheet, Image, ScrollView} from 'react-native';
+import {View, Text, StyleSheet, Image, ScrollView, TextInput} from 'react-native';
 import Navigation from './Navigation';
 
-export default class Profile extends Component {
+export default class Search extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -13,13 +13,14 @@ export default class Profile extends Component {
         return (
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.headerText}>profile</Text>
+                    <Text style={styles.headerText}>recommend</Text>
                     <Image source={require('../assets/divider.png')}/>
                 </View>
                 <View style={styles.body}>
-                    <ScrollView>
-                        
-                    </ScrollView>
+                    {/* <TextInput
+                        style={styles.searchBar}
+                        value="search"
+                    /> */}
                 </View>
                 <View style={styles.footer}>
                     <Navigation navigation={this.props.navigation}/>
@@ -50,5 +51,8 @@ const styles = StyleSheet.create({
     },
     footer: {
         flex: 0.1
+    },
+    searchBar: {
+
     }
 });
