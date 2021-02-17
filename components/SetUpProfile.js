@@ -17,16 +17,19 @@ export default class SetUpProfile extends Component {
           <View style={styles.textInputContainer}>
             <TextInput 
               style={styles.textInput} 
+              keyboardType="numbers-and-punctuation"
               placeholder="birthdate"
               placeholderTextColor={this.placeholderTextColor}
             />
             <TextInput 
               style={styles.textInput} 
+              keyboardType="numeric"
               placeholder="weight"
               placeholderTextColor={this.placeholderTextColor}
             />
             <TextInput 
               style={styles.textInput} 
+              keyboardType="numeric"
               placeholder="height"
               placeholderTextColor={this.placeholderTextColor}
             />
@@ -43,8 +46,9 @@ export default class SetUpProfile extends Component {
           </View>
           <View style={styles.bottom}>
             <Button title="Submit"
+              style={{alignSelf: "center", position: "relative", top:0}}
               onPress={() => {
-                this.props.navigation.navigate('Home');
+                this.props.navigation.navigate('UserPreferencesOnboarding');
                 console.log("User information submitted!");
                 }}/>
           </View>
@@ -58,7 +62,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "column",
-    color: "#FAF9F5",
+    backgroundColor: "#FAF9F5",
     alignItems: "center",
     justifyContent: "space-between",
   },
@@ -66,7 +70,9 @@ const styles = StyleSheet.create({
     flex:1,
     flexDirection: "column",
     position: "relative",
-    top: 220,
+    top:0,
+    marginTop: 220,
+    marginBottom: 25,
   },
   textInput: {
     fontSize: 24,
@@ -85,6 +91,7 @@ const styles = StyleSheet.create({
     flex: 0.1,
     top: 80,
     left: 50,
+    flexDirection: "column",
     position: "relative",
     alignContent: "flex-start",
     alignSelf: "flex-start",
@@ -95,11 +102,10 @@ const styles = StyleSheet.create({
     fontSize: 72,
     paddingBottom: 100,
   },
-  bottom: {
-    flex:1, 
-    flexDirection:"column",
+  bottom: { 
     position: "relative",
-    alignContent: "flex-end",
     bottom:0,
+    marginTop: 400,
+    marginBottom: 25,
   }
 });
