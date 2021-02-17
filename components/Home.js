@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {View, Text, StyleSheet, Image, ScrollView} from 'react-native';
+import {View, Text, StyleSheet, Image, ScrollView, Button} from 'react-native';
 import Navigation from './Navigation';
 
 export default class Home extends Component {
@@ -18,7 +18,10 @@ export default class Home extends Component {
                 </View>
                 <View style={styles.body}>
                     <ScrollView>
-                        
+                    <Button
+                    title="Preferences"
+                    onPress={() => this.props.navigation.navigate('UserPreferencesOnboarding')}
+                    />
                     </ScrollView>
                 </View>
                 <View style={styles.footer}>
@@ -46,7 +49,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     body: {
-        flex: 0.8
+        flex: 0.8,
+        marginTop: 45,
     },
     footer: {
         flex: 0.1
