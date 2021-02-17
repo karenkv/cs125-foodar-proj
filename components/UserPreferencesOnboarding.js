@@ -1,3 +1,5 @@
+'use strict';
+
 import React, { Component } from 'react';
 import { Image, Button, View, Text, StyleSheet } from 'react-native';
 
@@ -6,12 +8,23 @@ import SwipeCards from "react-native-swipe-cards-deck";
 class Card extends React.Component {
   constructor(props) {
     super(props);
+    console.log(this.props);
   }
 
   render() {
     return (
-      <View style={[styles.card, {backgroundColor: this.props.backgroundColor}]}>
-        <Text>{this.props.Text}</Text>
+      <View style={styles.card}>
+        <Image 
+          style={styles.thumbnail}
+          source={{uri: this.props.uri}}
+        />
+        <Text style={styles.cardText}>{this.props.text}</Text>
+        <View style={{flex:1, flexDirection:"row", position:"absolute", bottom:5}}>
+          <Button title='💔' // TODO: fix dislike button onPress
+            onPress={() => {this.props.swiper._forceSwipeLeft()}}/>
+          <Button title='❤️' // TODO: fix like button onPress
+            onPress={() => {this.props.swiper._forceSwipeRight()}}/>
+        </View>
       </View>
     )
   }
@@ -25,7 +38,11 @@ class NoMoreCards extends Component {
   render(){
     return (
       <View>
-        <Text style={styles.NoMoreCards}>That's all!</Text>
+        <Text style={styles.NoMoreCards}>Thanks for letting us know!</Text>
+        <Button
+          title="Done"
+          onPress={() => this.props.navigation.navigate('Home')}
+        />
       </View>
     )
   }
@@ -34,52 +51,135 @@ class NoMoreCards extends Component {
 export default class UserPreferencesOnboarding extends Component {
   constructor(props) {
     super(props);
+    const foodPrefOptions = [
+      { text: "Dairy", uri: "https://cdn-a.william-reed.com/var/wrbm_gb_food_pharma/storage/images/publications/food-beverage-nutrition/nutraingredients.com/news/research/global-study-links-high-fat-dairy-consumption-to-blood-and-heart-health/11403932-1-eng-GB/Global-study-links-high-fat-dairy-consumption-to-blood-and-heart-health.jpg" },
+      { text: "Nuts", uri: "https://selecthealth.org/-/media/selecthealth82/article/post/2017/05/nuts_blog_lg.ashx"},
+      { text: "Low-Carb", uri: "https://cdn.pixabay.com/photo/2015/01/03/16/56/bread-587597__340.jpg" },
+      { text: "Seafood", uri: "https://miro.medium.com/max/800/1*qa8T3nnBWaMHV63xKS-Abg.jpeg" }, 
+      { text: "Red Meat", uri: "https://cdn.pixabay.com/photo/2018/02/08/15/01/meat-3139640_1280.jpg" },
+      { text: "Vegetarian", uri: "https://cdn.pixabay.com/photo/2016/10/31/18/23/salad-1786327__340.jpg" },
+      { text: "Vegan", uri: "https://live.staticflickr.com/7837/47227303852_b36d09aeb8_b.jpg" },
+    ];
     this.state = {
-      cards: [
-        {text: 'Dairy', backgroundColor: 'yellow'},
-        {text: 'Seafood', backgroundColor: 'blue'},
-        {text: 'Red Meat', backgroundColor: 'green'},
-        {text: 'Vegetarian', backgroundColor: 'purple'},
-        {text: 'Vegan', backgroundColor: 'purple'},
-      ]
+      cards: foodPrefOptions
     };
   }
 
   handleYup (card) {
-    console.log(`Yup for ${card.text}`)
+    console.log(`Like for ${card.text}`)
     return true;
   }
 
   handleNope (card) {
-    console.log(`Nope for ${card.text}`)
+    console.log(`Dislike for ${card.text}`)
     return true;
   }
   
   render() {
     return (
-      <SwipeCards
-        cards={this.state.cards}
-        renderCard={(cardData) => <Card {...cardData} />}
-        keyExtractor={(cardData) => String(cardData.text)}
-        renderNoMoreCards={() => <NoMoreCards />}
-        stack={true}
-        stackDepth={3}
-        handleYup={this.handleYup}
-        handleNope={this.handleNope}
-      />
-    )
+      <View style={styles.container}>
+        <View style={styles.header}>
+            <Text style={styles.title}>sign up</Text>
+            <Image source={require('../assets/divider.png')}/>
+        </View>
+        <SwipeCards
+          cards={this.state.cards}
+          ref={(swiper) => this.swiper = swiper}
+          loop={false}
+          renderCard={(cardData) => <Card swiper={this.swiper} {...cardData} />}
+          keyExtractor={(cardData) => String(cardData.text)}
+          renderNoMoreCards={() => <NoMoreCards {...this.props} />}
+          showYup={true}
+          showNope={true}
+          handleYup={this.handleYup}
+          handleNope={this.handleNope}
+          yupText={"Like ❤️"}
+          nopeText={"Dislike 💔"}
+          yupStyle={styles.yup}
+          nopeStyle={styles.nope}
+          yupTextStyle={styles.yupText}
+          nopeTextStyle={styles.nopeText}
+        />
+        <Text style={styles.caption}>Swipe right on foods you like and left on foods you dislike</Text>
+    </View>
+    );
   }
 }
 
 
 const styles = StyleSheet.create({
-  card: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 300,
-    height: 300,
+  container: {
+    flex: 1,
+    flexDirection: "column",
+    backgroundColor: "#FAF9F5",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  noMoreCardsText: {
+  header: {
+    flex: 0.1,
+    top: 80,
+    left: 50,
+    alignContent: "flex-start",
+    alignSelf:"flex-start",
+    height: 150,
+  },
+  title: {
+    color: "#D22624",
+    fontSize: 72,
+    paddingBottom: 100,
+  },
+  card: {
+    justifyContent: "center",
+    alignContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 15,
+    overflow: "hidden",
+    width: 300,
+    height: 400,
+  },
+  cardText: {
+    fontSize: 24,
+    marginTop: 16,
+    color: "black",
+    alignSelf: "center",
+  },
+  NoMoreCards: {
+    color: "#D4947C",
     fontSize: 22,
-  }
+  },
+  yup: {
+    borderColor: "transparent",
+    position: "absolute",
+    padding: 20,
+    bottom: 50,
+    right: 0,
+  },
+  yupText: {
+    fontSize: 20,
+    color: "#D4947C",
+  },
+  nope: {
+    borderColor: "transparent",
+    position: "absolute",
+    padding: 20,
+    bottom: 50,
+    left: 0,
+  },
+  nopeText: {
+    fontSize: 20,
+    color: "#D4947C",
+  },
+  thumbnail: {
+    width: 250,
+    height: 250,
+  },
+  caption: {
+    fontSize: 16,
+    color: "#D4947C",
+    justifyContent: "center",
+    position:"relative",
+    bottom: 30,
+    marginHorizontal: 80,
+  },
 });
