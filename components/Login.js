@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, View, Text, Image, StyleSheet } from 'react-native';
+import { Button, View, Text, TextInput, Image, StyleSheet } from 'react-native';
 
 export default class Login extends Component {
     render() {
@@ -7,20 +7,34 @@ export default class Login extends Component {
             <View style={styles.container}>
                 <View style={styles.header}>
                     <Image source={require('../assets/logo.png')}/>
-                    <Text style={styles.headerText}>fooda</Text>
+                    <Text style={styles.headerText}>login</Text>
                     <Image source={require('../assets/divider.png')}/>
                 </View>
-                <View style={styles.body}>
-                    <Text numberOfLines={5} style={styles.motto}>
-                        your local food radar for meeting fitness goals
-                    </Text>
-                    <Button numberOfLines={10}
-                      title="login"
-                      onPress={() => this.props.navigation.navigate('Login')}
+                <View style={styles.textInputContainer}>
+                    <TextInput 
+                        style={styles.textInput} 
+                        placeholder="email"
+                        placeholderTextColor={this.placeholderTextColor}
                     />
-                    <Button
-                      title="sign up"
-                      onPress={() => this.props.navigation.navigate('Home')}
+                    <TextInput 
+                        style={styles.textInput} 
+                        placeholder="password"
+                        placeholderTextColor={this.placeholderTextColor}
+                    />
+                </View>
+                <View style={styles.bottom}>
+                    <Button title="back"
+                        style={{alignSelf: "center", position: "relative", top:0}}
+                        onPress={() => {
+                            this.props.navigation.navigate('Initial');
+                        }}
+                    />
+                    <Button title="next"
+                        style={{alignSelf: "center", position: "relative", top:0}}
+                        onPress={() => {
+                            this.props.navigation.navigate('Home');
+                            console.log("User logged in!");
+                        }}
                     />
                 </View>
             </View>
@@ -30,10 +44,6 @@ export default class Login extends Component {
 
 
 const styles = StyleSheet.create({
-  container: {
-      flex: 1,
-      backgroundColor: "#FAF9F5"
-  },
   header: {
       flex: 0.1,
       top: 30,
@@ -48,8 +58,38 @@ const styles = StyleSheet.create({
       flex: 0.8,
       marginTop: 45,
   },
-  motto: {
-      color: '#D35D50',
-      fontSize: 36
+  container: {
+    flex: 1,
+    flexDirection: "column",
+    backgroundColor: "#FAF9F5",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  textInputContainer: {
+    flex:1,
+    flexDirection: "column",
+    position: "relative",
+    top:0,
+    marginTop: 220,
+    marginBottom: 25,
+  },
+  textInput: {
+    fontSize: 24,
+    paddingLeft: 10,
+    height: 50,
+    width: 300,
+    backgroundColor: "#FFFFFF",
+    borderColor: "transparent",
+    borderWidth: 1,
+    borderRadius: 10,
+    alignSelf: "center",
+    position: "relative",
+    marginBottom:15,
+  },
+  bottom: { 
+    position: "relative",
+    bottom:0,
+    marginTop: 400,
+    marginBottom: 25,
   }
 });
