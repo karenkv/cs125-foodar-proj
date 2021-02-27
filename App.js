@@ -8,6 +8,7 @@ import Login from "./components/Login";
 import Profile from "./components/Profile";
 import UserPreferencesOnboarding from "./components/UserPreferencesOnboarding";
 import Search from "./components/Search";
+import SetUpProfile from "./components/SetUpProfile";
 
 const Stack = createStackNavigator();
 
@@ -16,6 +17,7 @@ export default class App extends Component {
     return <NavigationContainer> 
       <Stack.Navigator>
         <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Set Up" component={SetUpProfile} />
         <Stack.Screen name="UserPreferencesOnboarding" component={UserPreferencesOnboarding} />
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Search" component={Search} />
