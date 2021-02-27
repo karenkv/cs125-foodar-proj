@@ -13,14 +13,19 @@ export default class Search extends Component {
         return (
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.headerText}>recommend</Text>
+                    <Text style={styles.title}>recommend</Text>
                     <Image source={require('../assets/divider.png')}/>
                 </View>
                 <View style={styles.body}>
-                    {/* <TextInput
-                        style={styles.searchBar}
-                        value="search"
-                    /> */}
+                    <View style={styles.searchContainer}>
+                        <TextInput 
+                            style={styles.searchInput} 
+                            keyboardType="numbers-and-punctuation"
+                            placeholder="search 'sushi'"
+                            placeholderTextColor={this.placeholderTextColor}
+                        />
+                        <Image style={styles.searchIcon} source={require('../assets/search.png')} />
+                    </View>
                 </View>
                 <View style={styles.footer}>
                     <Navigation navigation={this.props.navigation}/>
@@ -34,16 +39,23 @@ export default class Search extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#FAF9F5"
+        flexDirection: "column",
+        backgroundColor: "#FAF9F5",
+        justifyContent: "center",
     },
     header: {
         flex: 0.1,
-        top: 30,
-        left: 20
+        top: 40,
+        left: 50,
+        flexDirection: "column",
+        position: "relative",
+        alignContent: "flex-start",
+        alignSelf: "flex-start",
     },
-    headerText: {
-        color: '#D22624',
+    title: {
+        color: "#D22624",
         fontSize: 53,
+        paddingBottom: 25,
         fontWeight: 'bold',
     },
     body: {
@@ -52,7 +64,31 @@ const styles = StyleSheet.create({
     footer: {
         flex: 0.1
     },
-    searchBar: {
-
+    searchContainer: {
+        flexDirection:"row",
+        alignSelf: "center",
+        justifyContent: "center",
+        alignItems:"center",
+        position: "relative",
+        top: 85,
+        margin: 10,
+        height: 50,
+        width: 320,
+        backgroundColor: "#FFFFFF",
+        borderColor: "transparent",
+        borderWidth: 1,
+        borderRadius: 8,
+    },
+    searchIcon: {
+        margin: 5,
+        padding: 10,
+        alignItems:"center",
+    },
+    searchInput: {
+        flex:1,
+        fontSize: 24,
+        paddingLeft: 15,
+        height: 50,
+        borderColor: "transparent",
     }
 });
