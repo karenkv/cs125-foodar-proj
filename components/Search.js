@@ -30,7 +30,7 @@ export default class Search extends Component {
     getLocation = () => {
         return new Promise((resolve, reject) => {
             Geolocation.getCurrentPosition(
-                position => {
+                async (position) => {
                     let newOrigin = {
                         latitude: position.coords.latitude,
                         longitude: position.coords.longitude,
@@ -43,12 +43,12 @@ export default class Search extends Component {
                     });
                     resolve(true);
                 },
-                err => {
+                (err) => {
                     console.log('Error getting location');
                     console.log(err);
                     reject(reject);
                 },
-                { enableHighAccuracy: true, timeout: 2000, maximumAge: 1000 }
+                { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
             );
         });
     };
@@ -108,6 +108,11 @@ export default class Search extends Component {
                         showsVerticalScrollIndicator={false}
                         keyExtractor={(result) => result.id}
                         renderItem={({ item }) => {
+                            if (this.state.isLoading) {
+                                return (
+                                    <Text style={{alignSelf:"center"}}>Finding the best places...</Text>
+                                )
+                            }
                             return (
                                 <TouchableOpacity
                                     onPress={() => console.log(`pressed ${item.name}`)}>
