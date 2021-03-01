@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {View, Text, StyleSheet, Image, ScrollView, TextInput} from 'react-native';
 import Navigation from './Navigation';
+import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
 import Config from 'react-native-config';
 
@@ -28,7 +29,7 @@ export default class Search extends Component {
     
     getLocation = () => {
         return new Promise((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(
+            Geolocation.getCurrentPosition(
                 position => {
                     let newOrigin = {
                         latitude: position.coords.latitude,
@@ -79,7 +80,7 @@ export default class Search extends Component {
     }
 
     async componentDidMount() {
-        //await this.getLocation();
+        await this.getLocation();
         await this.fetchMarkerData();
     }
 
