@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {View, Text, StyleSheet, Image, ScrollView, TextInput} from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, FlatList } from 'react-native';
 import Navigation from './Navigation';
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
@@ -12,21 +12,21 @@ export default class Search extends Component {
         super(props);
         this.state = {
             isLoading: true,
-            origin: { latitude:33.650340, longitude: -117.839313 },
+            origin: { latitude: 33.651381302843774, longitude: -117.83880949630442 }, // utc coordinates
             searchText: "",
         };
 
         config = {
             headers: { Authorization: `Bearer ${Config.YELP_API_KEY}`, },
             params: {
-                term: 'healthy',
+                term: 'sushi healthy',
                 latitude: this.state.origin.latitude,
                 longitude: this.state.origin.longitude,
-                limit: 10,
+                limit: 15,
             },
         }
     }
-    
+
     getLocation = () => {
         return new Promise((resolve, reject) => {
             Geolocation.getCurrentPosition(
@@ -54,16 +54,15 @@ export default class Search extends Component {
     };
 
     fetchMarkerData() {
-        console.log("Fetching data...");
+        console.log("Fetching restaurants...");
         return axios
-                .get(YELP_API_URL, config)
-                .then(responseJson => {
-                    this.setState({isLoading: false, markers: responseJson.data.businesses.map(x => x),});
-                })
-                .catch(error => {
-                    console.log('Error with making request')
-                    console.log(error);
-                });
+            .get(YELP_API_URL, config)
+            .then(responseJson => {
+                this.setState({ isLoading: false, results: responseJson.data.businesses });
+            })
+            .catch(error => {
+                console.log(error);
+            });
     }
 
     changeSearchInput(inputText) {
@@ -74,7 +73,7 @@ export default class Search extends Component {
         const inputText = this.state.searchText;
         if (inputText != "") {
             console.log(inputText);
-            config.params.term = inputText; 
+            config.params.term = inputText;
             await this.fetchMarkerData();
         }
     }
@@ -85,26 +84,44 @@ export default class Search extends Component {
     }
 
     render() {
+        const results = this.state.results;
         return (
             <View style={styles.container}>
                 <View style={styles.header}>
                     <Text style={styles.title}>recommend</Text>
-                    <Image source={require('../assets/divider.png')}/>
+                    <Image source={require('../assets/divider.png')} />
                 </View>
                 <View style={styles.body}>
                     <View style={styles.searchContainer}>
-                        <TextInput 
-                            style={styles.searchInput} 
+                        <TextInput
+                            style={styles.searchInput}
                             placeholder="search 'sushi'"
                             placeholderTextColor={this.placeholderTextColor}
                             onChangeText={text => this.changeSearchInput(text)}
                             onEndEditing={() => this.endEditing()}
+                            autoCorrect={false}
                         />
                         <Image style={styles.searchIcon} source={require('../assets/search.png')} />
                     </View>
+                    <FlatList style={styles.scrollView}
+                        data={results}
+                        showsVerticalScrollIndicator={false}
+                        keyExtractor={(result) => result.id}
+                        renderItem={({ item }) => {
+                            return (
+                                <TouchableOpacity
+                                    onPress={() => console.log(`pressed ${item.name}`)}>
+                                    <View style={styles.listItem}>
+                                        <Text style={styles.listItemName}>{item.name}</Text>
+                                        <Text style={styles.listItemPhone}>{item.display_phone != "" ? item.display_phone : "-"}</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            )
+                        }}
+                    />
                 </View>
                 <View style={styles.footer}>
-                    <Navigation navigation={this.props.navigation}/>
+                    <Navigation navigation={this.props.navigation} />
                 </View>
             </View>
         )
@@ -121,10 +138,10 @@ const styles = StyleSheet.create({
     },
     header: {
         flex: 0.1,
+        position: "relative",
         top: 40,
         left: 50,
         flexDirection: "column",
-        position: "relative",
         alignContent: "flex-start",
         alignSelf: "flex-start",
     },
@@ -141,10 +158,10 @@ const styles = StyleSheet.create({
         flex: 0.1
     },
     searchContainer: {
-        flexDirection:"row",
+        flexDirection: "row",
         alignSelf: "center",
         justifyContent: "center",
-        alignItems:"center",
+        alignItems: "center",
         position: "relative",
         top: 85,
         margin: 10,
@@ -158,16 +175,37 @@ const styles = StyleSheet.create({
     searchIcon: {
         margin: 5,
         padding: 10,
-        alignItems:"center",
+        alignItems: "center",
     },
     searchInput: {
-        flex:1,
+        flex: 1,
         fontSize: 24,
         paddingLeft: 15,
         height: 50,
         borderColor: "transparent",
     },
     scrollView: {
-        marginHorizontal: 10,
-    }
+        position: "relative",
+        top: 90,
+        marginVertical: 12,
+        marginHorizontal: 50,
+        maxHeight: 435,
+    },
+    listItem: {
+        flex: 1,
+        alignSelf: "stretch",
+        padding: 10,
+        flexDirection: "column",
+        backgroundColor: "white",
+        marginVertical: 5,
+        height: 75,
+        borderRadius: 5,
+    },
+    listItemName: {
+        fontSize: 16,
+        marginBottom: 5,
+    },
+    listItemPhone: {
+        fontSize: 14,
+    },
 });
