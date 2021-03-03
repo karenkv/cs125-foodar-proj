@@ -7,20 +7,26 @@ export default class Initial extends Component {
             <View style={styles.container}>
                 <View style={styles.header}>
                     <Image source={require('../assets/logo.png')}/>
-                    <Text style={styles.headerText}>fooda</Text>
-                    <Image source={require('../assets/divider.png')}/>
                 </View>
                 <View style={styles.body}>
+                    <Text style={styles.headerText}>foodar</Text>
+                    <Image source={require('../assets/divider.png')}/>
                     <Text numberOfLines={5} style={styles.motto}>
                         your local food radar for meeting fitness goals
                     </Text>
-                    <Button numberOfLines={10}
-                      title="login"
-                      onPress={() => this.props.navigation.navigate('Login')}
+                </View>
+                <View style={styles.footer}>
+                    <Button
+                        color="#D4947C"
+                        title="login"
+                        onPress={() => this.props.navigation.navigate('Login')}
+                        accessibilityLabel="Click to login to foodar"
                     />
                     <Button
-                      title="sign up"
-                      onPress={() => this.props.navigation.navigate('Home')}
+                        color="#D4947C"
+                        title="sign up"
+                        onPress={() => this.props.navigation.navigate('Home')}
+                        accessibilityLabel="Click to sign up for foodar"
                     />
                 </View>
             </View>
@@ -28,28 +34,29 @@ export default class Initial extends Component {
     }
 }
 
-
 const styles = StyleSheet.create({
-  container: {
-      flex: 1,
-      backgroundColor: "#FAF9F5"
-  },
-  header: {
-      flex: 0.1,
-      top: 30,
-      left: 20
-  },
-  headerText: {
-      color: '#D22624',
-      fontSize: 53,
-      fontWeight: 'bold',
-  },
-  body: {
-      flex: 0.8,
-      marginTop: 45,
-  },
-  motto: {
-      color: '#D35D50',
-      fontSize: 36
-  }
+    container: {
+        flex: 1,
+        backgroundColor: "#FAF9F5",
+        padding: 40
+    },
+    header: {
+        flex: 0.3,
+    },
+    headerText: {
+        color: '#D22624',
+        fontSize: 70,
+        fontWeight: 'bold',
+    },
+    motto: {
+        fontSize: 40,
+        top: 30,
+        color: '#D35D50'
+    },
+    body: {
+        flex: 0.5
+    },
+    footer: {
+        flex: 0.2,
+    }
 });
