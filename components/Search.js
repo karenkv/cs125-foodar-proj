@@ -13,16 +13,17 @@ export default class Search extends Component {
         this.state = {
             isLoading: true,
             origin: { latitude: 33.651381302843774, longitude: -117.83880949630442 }, // utc coordinates
-            searchText: "",
+            searchText: "sushi",
         };
 
         config = {
             headers: { Authorization: `Bearer ${Config.YELP_API_KEY}`, },
             params: {
-                term: 'sushi healthy',
+                term: this.state.searchText,
                 latitude: this.state.origin.latitude,
                 longitude: this.state.origin.longitude,
-                limit: 15,
+                limit: 25,
+                categories: "food,restaurants"
             },
         }
     }
@@ -30,7 +31,7 @@ export default class Search extends Component {
     getLocation = () => {
         return new Promise((resolve, reject) => {
             Geolocation.getCurrentPosition(
-                async (position) => {
+                (position) => {
                     let newOrigin = {
                         latitude: position.coords.latitude,
                         longitude: position.coords.longitude,
@@ -48,7 +49,7 @@ export default class Search extends Component {
                     console.log(err);
                     reject(reject);
                 },
-                { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+                { enableHighAccuracy: true, timeout: 200000, maximumAge: 3000 }
             );
         });
     };
@@ -71,7 +72,7 @@ export default class Search extends Component {
 
     async endEditing() {
         const inputText = this.state.searchText;
-        if (inputText != "") {
+        if (inputText != "" || inputText.length > 0) {
             console.log(inputText);
             config.params.term = inputText;
             await this.fetchMarkerData();
@@ -79,7 +80,7 @@ export default class Search extends Component {
     }
 
     async componentDidMount() {
-        await this.getLocation();
+        await this.getLocation().catch(error => { console.log(error) });
         await this.fetchMarkerData();
     }
 
@@ -110,7 +111,7 @@ export default class Search extends Component {
                         renderItem={({ item }) => {
                             if (this.state.isLoading) {
                                 return (
-                                    <Text style={{alignSelf:"center"}}>Finding the best places...</Text>
+                                    <Text>Finding the best places...</Text>
                                 )
                             }
                             return (
@@ -121,6 +122,13 @@ export default class Search extends Component {
                                         <Text style={styles.listItemPhone}>{item.display_phone != "" ? item.display_phone : "-"}</Text>
                                     </View>
                                 </TouchableOpacity>
+                            )
+                        }}
+                        ListEmptyComponent={ () => {
+                            return (
+                                <View>
+                                    <Text style={{fontSize:16, alignSelf: "center"}}>Searching... or try again.</Text>
+                                </View>
                             )
                         }}
                     />
