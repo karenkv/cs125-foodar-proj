@@ -5,6 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import Home from "./components/Home";
 import Login from "./components/Login";
+import Initial from "./components/Initial";
 import Profile from "./components/Profile";
 import UserPreferencesOnboarding from "./components/UserPreferencesOnboarding";
 import Search from "./components/Search";
@@ -16,6 +17,7 @@ export default class App extends Component {
   render() {
     return <NavigationContainer> 
       <Stack.Navigator>
+        <Stack.Screen name="Initial" component={Initial} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Set Up" component={SetUpProfile} />
         <Stack.Screen name="UserPreferencesOnboarding" component={UserPreferencesOnboarding} />

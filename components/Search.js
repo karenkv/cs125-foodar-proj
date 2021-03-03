@@ -1,29 +1,132 @@
 import React, { Component } from 'react';
-import {View, Text, StyleSheet, Image, ScrollView, TextInput} from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, FlatList } from 'react-native';
 import Navigation from './Navigation';
+import Geolocation from '@react-native-community/geolocation';
+import axios from 'axios';
+import Config from 'react-native-config';
+
+const YELP_API_URL = "https://api.yelp.com/v3/businesses/search";
 
 export default class Search extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isLoading: true,
+            origin: { latitude: 33.651381302843774, longitude: -117.83880949630442 }, // utc coordinates
+            searchText: "",
         };
-      }
+
+        config = {
+            headers: { Authorization: `Bearer ${Config.YELP_API_KEY}`, },
+            params: {
+                term: 'sushi healthy',
+                latitude: this.state.origin.latitude,
+                longitude: this.state.origin.longitude,
+                limit: 15,
+            },
+        }
+    }
+
+    getLocation = () => {
+        return new Promise((resolve, reject) => {
+            Geolocation.getCurrentPosition(
+                async (position) => {
+                    let newOrigin = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                    };
+                    config.params.latitude = newOrigin.latitude;
+                    config.params.longitude = newOrigin.longitude;
+
+                    this.setState({
+                        origin: newOrigin,
+                    });
+                    resolve(true);
+                },
+                (err) => {
+                    console.log('Error getting location');
+                    console.log(err);
+                    reject(reject);
+                },
+                { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+            );
+        });
+    };
+
+    fetchMarkerData() {
+        console.log("Fetching restaurants...");
+        return axios
+            .get(YELP_API_URL, config)
+            .then(responseJson => {
+                this.setState({ isLoading: false, results: responseJson.data.businesses });
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
+    changeSearchInput(inputText) {
+        this.setState({ searchText: inputText, });
+    }
+
+    async endEditing() {
+        const inputText = this.state.searchText;
+        if (inputText != "") {
+            console.log(inputText);
+            config.params.term = inputText;
+            await this.fetchMarkerData();
+        }
+    }
+
+    async componentDidMount() {
+        await this.getLocation();
+        await this.fetchMarkerData();
+    }
 
     render() {
+        const results = this.state.results;
         return (
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.headerText}>recommend</Text>
-                    <Image source={require('../assets/divider.png')}/>
+                    <Text style={styles.title}>recommend</Text>
+                    <Image source={require('../assets/divider.png')} />
                 </View>
                 <View style={styles.body}>
-                    {/* <TextInput
-                        style={styles.searchBar}
-                        value="search"
-                    /> */}
+                    <View style={styles.searchContainer}>
+                        <TextInput
+                            style={styles.searchInput}
+                            placeholder="search 'sushi'"
+                            placeholderTextColor={this.placeholderTextColor}
+                            onChangeText={text => this.changeSearchInput(text)}
+                            onEndEditing={() => this.endEditing()}
+                            autoCorrect={false}
+                        />
+                        <Image style={styles.searchIcon} source={require('../assets/search.png')} />
+                    </View>
+                    <FlatList style={styles.scrollView}
+                        data={results}
+                        showsVerticalScrollIndicator={false}
+                        keyExtractor={(result) => result.id}
+                        renderItem={({ item }) => {
+                            if (this.state.isLoading) {
+                                return (
+                                    <Text style={{alignSelf:"center"}}>Finding the best places...</Text>
+                                )
+                            }
+                            return (
+                                <TouchableOpacity
+                                    onPress={() => console.log(`pressed ${item.name}`)}>
+                                    <View style={styles.listItem}>
+                                        <Text style={styles.listItemName}>{item.name}</Text>
+                                        <Text style={styles.listItemPhone}>{item.display_phone != "" ? item.display_phone : "-"}</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            )
+                        }}
+                    />
                 </View>
                 <View style={styles.footer}>
-                    <Navigation navigation={this.props.navigation}/>
+                    <Navigation navigation={this.props.navigation} />
                 </View>
             </View>
         )
@@ -34,16 +137,23 @@ export default class Search extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#FAF9F5"
+        flexDirection: "column",
+        backgroundColor: "#FAF9F5",
+        justifyContent: "center",
     },
     header: {
         flex: 0.1,
-        top: 30,
-        left: 20
+        position: "relative",
+        top: 40,
+        left: 50,
+        flexDirection: "column",
+        alignContent: "flex-start",
+        alignSelf: "flex-start",
     },
-    headerText: {
-        color: '#D22624',
+    title: {
+        color: "#D22624",
         fontSize: 53,
+        paddingBottom: 25,
         fontWeight: 'bold',
     },
     body: {
@@ -52,7 +162,55 @@ const styles = StyleSheet.create({
     footer: {
         flex: 0.1
     },
-    searchBar: {
-
-    }
+    searchContainer: {
+        flexDirection: "row",
+        alignSelf: "center",
+        justifyContent: "center",
+        alignItems: "center",
+        position: "relative",
+        top: 85,
+        margin: 10,
+        height: 50,
+        width: 320,
+        backgroundColor: "#FFFFFF",
+        borderColor: "transparent",
+        borderWidth: 1,
+        borderRadius: 8,
+    },
+    searchIcon: {
+        margin: 5,
+        padding: 10,
+        alignItems: "center",
+    },
+    searchInput: {
+        flex: 1,
+        fontSize: 24,
+        paddingLeft: 15,
+        height: 50,
+        borderColor: "transparent",
+    },
+    scrollView: {
+        position: "relative",
+        top: 90,
+        marginVertical: 12,
+        marginHorizontal: 50,
+        maxHeight: 435,
+    },
+    listItem: {
+        flex: 1,
+        alignSelf: "stretch",
+        padding: 10,
+        flexDirection: "column",
+        backgroundColor: "white",
+        marginVertical: 5,
+        height: 75,
+        borderRadius: 5,
+    },
+    listItemName: {
+        fontSize: 16,
+        marginBottom: 5,
+    },
+    listItemPhone: {
+        fontSize: 14,
+    },
 });
