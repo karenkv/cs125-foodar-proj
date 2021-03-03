@@ -7,7 +7,9 @@ export default class Login extends Component {
             <View style={styles.container}>
                 <View style={styles.header}>
                     <Image source={require('../assets/logo.png')}/>
-                    <Text style={styles.headerText}>login</Text>
+                </View>
+                <View style={styles.title}>
+                    <Text style={styles.titleName}>login</Text>
                     <Image source={require('../assets/divider.png')}/>
                 </View>
                 <View style={styles.textInputContainer}>
@@ -22,19 +24,16 @@ export default class Login extends Component {
                         placeholderTextColor={this.placeholderTextColor}
                     />
                 </View>
-                <View style={styles.bottom}>
+                <View style={styles.footer}>
                     <Button title="back"
-                        style={{alignSelf: "center", position: "relative", top:0}}
-                        onPress={() => {
-                            this.props.navigation.navigate('Initial');
-                        }}
+                        color="#D4947C"
+                        onPress={() => this.props.navigation.navigate('Initial')}
+                        accessibilityLabel="Click to go back to initial screen"
                     />
-                    <Button title="next"
-                        style={{alignSelf: "center", position: "relative", top:0}}
-                        onPress={() => {
-                            this.props.navigation.navigate('Home');
-                            console.log("User logged in!");
-                        }}
+                    <Button title="login"
+                        color="#D4947C"
+                        onPress={() => this.props.navigation.navigate('Home')}
+                        accessibilityLabel="Click to submit login information"
                     />
                 </View>
             </View>
@@ -44,34 +43,28 @@ export default class Login extends Component {
 
 
 const styles = StyleSheet.create({
-  header: {
-      flex: 0.1,
-      top: 30,
-      left: 20
-  },
-  headerText: {
-      color: '#D22624',
-      fontSize: 53,
-      fontWeight: 'bold',
-  },
-  body: {
-      flex: 0.8,
-      marginTop: 45,
-  },
   container: {
     flex: 1,
     flexDirection: "column",
     backgroundColor: "#FAF9F5",
-    alignItems: "center",
-    justifyContent: "center",
+    padding: 40
+  },
+  header: {
+      flex: 0.4,
+      right: 40
+  },
+  titleName: {
+      color: '#D22624',
+      fontSize: 70,
+      fontWeight: 'bold',
+  },
+  title: {
+      flex: 0.4,
   },
   textInputContainer: {
-    flex:1,
+    flex: 0.4,
     flexDirection: "column",
     position: "relative",
-    top:0,
-    marginTop: 220,
-    marginBottom: 25,
   },
   textInput: {
     fontSize: 24,
@@ -86,10 +79,7 @@ const styles = StyleSheet.create({
     position: "relative",
     marginBottom:15,
   },
-  bottom: { 
-    position: "relative",
-    bottom:0,
-    marginTop: 400,
-    marginBottom: 25,
-  }
+  footer: {
+    flex: 0.4,
+  }   
 });
