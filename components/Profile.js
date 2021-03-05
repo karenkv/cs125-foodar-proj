@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TextInput } from 'react-native';
 import Navigation from './Navigation';
+import SaveButton from './SaveButton';
 
 export default class Profile extends Component {
     constructor(props) {
@@ -10,6 +11,10 @@ export default class Profile extends Component {
             profileImgUri: "https://stylecaster.com/wp-content/uploads/2020/04/blackpink-jennie-kim.jpg",
             name: "Jennie Kim",
         };
+    }
+
+    saveProfile() {
+        console.log("profile saved");
     }
 
     render() {
@@ -71,6 +76,10 @@ export default class Profile extends Component {
                                 style={styles.textInput} 
                                 placeholder="average activity level"
                                 placeholderTextColor={this.placeholderTextColor}
+                            />
+                            <SaveButton 
+                                style={{alignSelf: "center", marginVertical: 12}}
+                                onPress={ this.saveProfile }
                             />
                         </View>
                     </ScrollView>
@@ -147,6 +156,9 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         position: "relative",
         marginBottom:15,
+    },
+    saveButton: {
+
     },
     footer: {
         flex: 0.1,
