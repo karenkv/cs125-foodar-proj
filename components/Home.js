@@ -1,31 +1,107 @@
 import React, { Component } from 'react';
-import {View, Text, StyleSheet, Image, ScrollView, Button} from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, Button, Pressable, Modal, TextInput } from 'react-native';
 import Navigation from './Navigation';
+import SaveButton from './SaveButton';
 
 export default class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            modalVisible: false,
         };
-      }
+    }
+
+    setModalVisible = (visible) => {
+        this.setState({ modalVisible: visible });
+        console.log(this.state.modalVisible);
+    }
+
+    renderModal() {
+        const modalVisible = this.state.modalVisible;
+        return (
+            <View style={styles.modalView}>
+                <Pressable
+                    style={[styles.button, styles.buttonClose]}
+                    onPress={() => this.setModalVisible(!modalVisible)}
+                >
+                    <Text style={styles.closeButton}>X</Text>
+                </Pressable>
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalHeader}>
+                        <Text style={[styles.headerText, { fontSize: 42, marginBottom: 12 }]}>add meal</Text>
+                        <Image source={require('../assets/divider-white.png')} />
+                    </View>
+                    <View style={styles.textInputContainer}>
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder="meal"
+                            placeholderTextColor={this.placeholderTextColor}
+                        />
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder="name"
+                            placeholderTextColor={this.placeholderTextColor}
+                        />
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder="calories"
+                            placeholderTextColor={this.placeholderTextColor}
+                        />
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder="carbs"
+                            placeholderTextColor={this.placeholderTextColor}
+                        />
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder="protein"
+                            placeholderTextColor={this.placeholderTextColor}
+                        />
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder="fat"
+                            placeholderTextColor={this.placeholderTextColor}
+                        />
+                    </View>
+                    <SaveButton style={{ backgroundColor: "#FAF9F5", maxWidth: 75, alignSelf: "center" }} />
+                </View>
+            </View>
+        );
+    }
 
     render() {
+        const modalVisible = this.state.modalVisible;
         return (
             <View style={styles.container}>
                 <View style={styles.header}>
                     <Text style={styles.headerText}>home</Text>
-                    <Image source={require('../assets/divider.png')}/>
+                    <Image source={require('../assets/divider.png')} />
                 </View>
                 <View style={styles.body}>
                     <ScrollView>
-                    <Button
-                    title="Preferences"
-                    onPress={() => this.props.navigation.navigate('UserPreferencesOnboarding')}
-                    />
+                        <Button
+                            title="Preferences"
+                            onPress={() => this.props.navigation.navigate('UserPreferencesOnboarding')}
+                        />
                     </ScrollView>
+                    <Modal
+                        animationType="fade"
+                        transparent={true}
+                        visible={modalVisible}
+                        onRequestClose{... () => {
+                            this.setModalVisible(!modalVisible);
+                        }}
+                    >
+                        {this.renderModal()}
+                    </Modal>
+                    <Pressable
+                        style={styles.addMealButton}
+                        onPress={() => this.setModalVisible(true)}>
+                        <Text style={{ color: "#FFF", fontSize: 46, fontWeight: "bold" }}>+</Text>
+                    </Pressable>
                 </View>
                 <View style={styles.footer}>
-                    <Navigation navigation={this.props.navigation}/>
+                    <Navigation navigation={this.props.navigation} />
                 </View>
             </View>
         )
@@ -51,6 +127,66 @@ const styles = StyleSheet.create({
     body: {
         flex: 0.8,
         marginTop: 45,
+    },
+    addMealButton: {
+        backgroundColor: "#D22624",
+        height: 55,
+        width: 55,
+        borderRadius: 100,
+        alignItems: "center",
+        alignSelf: "flex-end",
+        marginRight: 15,
+        position: "relative",
+        bottom: 15,
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: "#D6CBA8",
+        borderRadius: 20,
+        padding: 25,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 1,
+            height: 2
+        },
+        shadowOpacity: 0.20,
+        shadowRadius: 4,
+        elevation: 3,
+        position: "relative",
+        top: 130,
+        minHeight: 630,
+    },
+    modalHeader: {
+        flex: 1,
+        marginBottom: 10,
+    },
+    closeButton: {
+        color: "#FAF9F5",
+        alignSelf: "flex-end",
+        fontSize: 32,
+    },
+    modalContainer: {
+        flex: 1,
+        flexDirection: "column",
+        marginHorizontal: 25
+    },
+    textInputContainer: {
+        flexDirection: "column",
+        marginTop: 15,
+        marginBottom: 10,
+    },
+    textInput: {
+        fontSize: 24,
+        paddingLeft: 12,
+        height: 50,
+        width: 280,
+        backgroundColor: "#FFFFFF",
+        borderColor: "transparent",
+        borderWidth: 1,
+        borderRadius: 10,
+        alignSelf: "center",
+        position: "relative",
+        marginBottom: 13,
     },
     footer: {
         flex: 0.1
