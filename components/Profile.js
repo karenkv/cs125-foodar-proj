@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, TextInput } from 'react-native';
 import Navigation from './Navigation';
 
 export default class Profile extends Component {
     constructor(props) {
         super(props);
+        this.placeholderTextColor = "#ACACAC";
         this.state = {
             profileImgUri: "https://stylecaster.com/wp-content/uploads/2020/04/blackpink-jennie-kim.jpg",
             name: "Jennie Kim",
         };
-      }
+    }
 
     render() {
         const imgUri = this.state.profileImgUri;
@@ -21,11 +22,57 @@ export default class Profile extends Component {
                     <Image source={require('../assets/divider.png')}/>
                 </View>
                 <View style={styles.body}>
-                    <ScrollView>
+                    <ScrollView 
+                        showsVerticalScrollIndicator="false">
                         <View style={styles.profileImgContainer}>
                             <Image source={{ uri: imgUri}} style={styles.profileImg}/>
                         </View>
                         <Text style={styles.nameText}>{name}</Text>
+                        <View style={styles.textInputContainer}>
+                            <TextInput 
+                                style={styles.textInput} 
+                                placeholder="full name"
+                                placeholderTextColor={this.placeholderTextColor}
+                            />
+                            <TextInput 
+                                style={styles.textInput} 
+                                placeholder="email"
+                                placeholderTextColor={this.placeholderTextColor}
+                            />
+                            <TextInput 
+                                style={styles.textInput} 
+                                placeholder="password"
+                                placeholderTextColor={this.placeholderTextColor}
+                            />
+                            <TextInput 
+                                style={styles.textInput} 
+                                keyboardType="numeric"
+                                placeholder="zipcode"
+                                placeholderTextColor={this.placeholderTextColor}
+                            />
+                            <TextInput 
+                                style={styles.textInput} 
+                                keyboardType="numeric"
+                                placeholder="weight"
+                                placeholderTextColor={this.placeholderTextColor}
+                            />
+                            <TextInput 
+                                style={styles.textInput} 
+                                keyboardType="numeric"
+                                placeholder="height"
+                                placeholderTextColor={this.placeholderTextColor}
+                            />
+                            <TextInput 
+                                style={styles.textInput} 
+                                placeholder="food preference"
+                                placeholderTextColor={this.placeholderTextColor}
+                            />
+                            <TextInput 
+                                style={styles.textInput} 
+                                placeholder="average activity level"
+                                placeholderTextColor={this.placeholderTextColor}
+                            />
+                        </View>
                     </ScrollView>
                 </View>
                 <View style={styles.footer}>
@@ -67,6 +114,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 55,
     },
     profileImgContainer: {
+        alignSelf: "center",
         marginVertical: 10,
         height: 230,
         width: 230,
@@ -83,6 +131,22 @@ const styles = StyleSheet.create({
         margin: 22,
         padding: 5,
         fontSize: 24,
+    },
+    textInputContainer: {
+        flexDirection: "column",
+    },
+    textInput: {
+        fontSize: 24,
+        paddingLeft: 10,
+        height: 50,
+        width: 300,
+        backgroundColor: "#FFFFFF",
+        borderColor: "transparent",
+        borderWidth: 1,
+        borderRadius: 10,
+        alignSelf: "center",
+        position: "relative",
+        marginBottom:15,
     },
     footer: {
         flex: 0.1,
