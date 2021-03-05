@@ -2,6 +2,18 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, Button, Pressable, Modal, TextInput } from 'react-native';
 import Navigation from './Navigation';
 import SaveButton from './SaveButton';
+import Config from 'react-native-config';
+
+const GOOGLE_CLIENT_ID = Config.GOOGLE_CLIENT_ID;
+const scopes = ['https://www.googleapis.com/auth/fitness.activity.read',
+    'https://www.googleapis.com/auth/fitness.activity.write',
+    'https://www.googleapis.com/auth/fitness.body.read',
+    'https://www.googleapis.com/auth/fitness.body.write',
+    'https://www.googleapis.com/auth/fitness.location.read',
+    'https://www.googleapis.com/auth/fitness.location.write',
+    'https://www.googleapis.com/auth/fitness.nutrition.read',
+    'https://www.googleapis.com/auth/fitness.nutrition.write'];
+const oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
 
 export default class Home extends Component {
     constructor(props) {
@@ -116,8 +128,8 @@ const styles = StyleSheet.create({
     },
     header: {
         flex: 0.1,
-        top: 30,
-        left: 20
+        top: 50,
+        left: 25
     },
     headerText: {
         color: '#D22624',
@@ -135,9 +147,9 @@ const styles = StyleSheet.create({
         borderRadius: 100,
         alignItems: "center",
         alignSelf: "flex-end",
-        marginRight: 15,
+        marginRight: 25,
         position: "relative",
-        bottom: 15,
+        bottom: 25,
     },
     modalView: {
         margin: 20,
