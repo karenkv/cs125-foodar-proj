@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     },
     header: {
         flex: 0.1,
-        top: 30,
+        top: 70,
         left: 20
     },
     headerText: {
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     },
     body: {
         flex: 0.8,
-        marginTop: 45,
+        marginTop: 70,
     },
     addMealButton: {
         backgroundColor: "#D22624",

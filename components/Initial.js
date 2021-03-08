@@ -25,7 +25,7 @@ export default class Initial extends Component {
                     <Button
                         color="#D4947C"
                         title="sign up"
-                        onPress={() => this.props.navigation.navigate('Home')}
+                        onPress={() => this.props.navigation.navigate('Signup')}
                         accessibilityLabel="Click to sign up for foodar"
                     />
                 </View>
@@ -42,6 +42,8 @@ const styles = StyleSheet.create({
     },
     header: {
         flex: 0.3,
+        right: 40,
+        top: 30
     },
     headerText: {
         color: '#D22624',

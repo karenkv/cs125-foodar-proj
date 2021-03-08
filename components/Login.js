@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
   },
   header: {
       flex: 0.4,
+      top: 30,
       right: 40
   },
   titleName: {
