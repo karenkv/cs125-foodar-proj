@@ -123,10 +123,10 @@ export default class Home extends Component {
 
     getDate = () => {
         let day = new Date(Date.now()).getDay();
-        let dd = new Date(Date.now()).getDate();
         let mm = new Date(Date.now()).getMonth();
+        let dd = new Date(Date.now()).getDate();
         let yy = new Date(Date.now()).getFullYear();
-        return `${DAYS[day]}, ${dd} ${MONTHS[mm]} ${yy}`;
+        return `${DAYS[day]}, ${MONTHS[mm]}  ${dd}, ${yy}`;
     }
 
     render() {
