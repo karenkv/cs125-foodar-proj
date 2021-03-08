@@ -2,10 +2,35 @@ import React, { Component } from 'react';
 import { Image, StyleSheet, View, Text, TextInput, SafeAreaView, Button } from 'react-native';
 import CustomButton from './CustomButton';
 
+import auth from '@react-native-firebase/auth';
+
 export default class Signup extends Component {
     constructor(props) {
       super(props);
       this.placeholderTextColor = "#ACACAC";
+      this.state = {
+        username: "",
+        password: "",
+      }
+    }
+
+    createUser = () => {
+      auth()
+      .createUserWithEmailAndPassword(this.state.username, this.state.password)
+      .then(() => {
+          console.log('User account created & signed in!');
+      })
+      .catch(error => {
+          if (error.code === 'auth/email-already-in-use') {
+          console.log('That email address is already in use!');
+          }
+
+          if (error.code === 'auth/invalid-email') {
+          console.log('That email address is invalid!');
+          }
+
+          console.error(error);
+      });
     }
 
     render() {
@@ -16,6 +41,20 @@ export default class Signup extends Component {
             <Image source={require('../assets/divider.png')}/>
           </View>
           <View style={styles.textInputContainer}>
+            <TextInput 
+              style={styles.textInput} 
+              keyboardType="email"
+              placeholder="email"
+              onChangeText={(text) => this.setState({username:text})}
+              placeholderTextColor={this.placeholderTextColor}
+            />
+            <TextInput 
+              style={styles.textInput} 
+              textContentType="password"
+              placeholder="password"
+              onChangeText={(text) => this.setState({password:text})}
+              placeholderTextColor={this.placeholderTextColor}
+            />
             <TextInput 
               style={styles.textInput} 
               keyboardType="numbers-and-punctuation"
@@ -52,12 +91,13 @@ export default class Signup extends Component {
               accessibilityLabel="Click to go back to initial screen"
             />
             <CustomButton 
-              title="submit"
+              title="next"
               accessibilityLabel="Click to continue user signup with preferences"
               onPress={() => {
+                this.createUser;
                 this.props.navigation.navigate('UserPreferencesOnboarding');
                 console.log("User information submitted!");
-                }}/>
+              }}/>
           </View>
         </SafeAreaView>
       )

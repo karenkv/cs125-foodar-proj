@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, Image, ScrollView, TextInput } from 'react-nati
 import Navigation from './Navigation';
 import CustomButton from './CustomButton';
 
+import auth from '@react-native-firebase/auth';
+
 export default class Profile extends Component {
     constructor(props) {
         super(props);
@@ -15,6 +17,10 @@ export default class Profile extends Component {
 
     saveProfile() {
         console.log("profile saved");
+    }
+
+    signOut() {
+        auth().signOut().then(() => console.log('User signed out!'));
     }
 
     render() {
@@ -85,7 +91,9 @@ export default class Profile extends Component {
                             <CustomButton 
                                 title="log out"
                                 style={{alignSelf: "center", marginVertical: 12}}
-                                onPress={() => this.props.navigation.navigate('Initial')}
+                                onPress={
+                                    () => { this.props.navigation.navigate('Initial'); this.signOut(); }
+                                }
                             />
                         </View>
                     </ScrollView>

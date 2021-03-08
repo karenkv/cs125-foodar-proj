@@ -43,6 +43,11 @@ class NoMoreCards extends Component {
         <CustomButton
           title="done"
           onPress={() => this.props.navigation.navigate('Home')}
+          style={{ 
+            backgroundColor: "#FAF9F5", 
+            maxWidth: 75, 
+            alignSelf: "center" 
+          }} 
         />
       </View>
     )
