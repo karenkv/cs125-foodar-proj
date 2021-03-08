@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, Pressable, Modal, TextInput } from 'react-native';
 import Navigation from './Navigation';
-import SaveButton from './SaveButton';
 import Config from 'react-native-config';
+import CustomButton from './CustomButton';
 
 const GOOGLE_CLIENT_ID = Config.GOOGLE_CLIENT_ID;
 const scopes = ['https://www.googleapis.com/auth/fitness.activity.read',
@@ -83,7 +83,14 @@ export default class Home extends Component {
                             placeholderTextColor={this.placeholderTextColor}
                         />
                     </View>
-                    <SaveButton style={{ backgroundColor: "#FAF9F5", maxWidth: 75, alignSelf: "center" }} />
+                    <CustomButton
+                        title="save"
+                        style={{ 
+                            backgroundColor: "#FAF9F5", 
+                            maxWidth: 75, 
+                            alignSelf: "center" 
+                        }} 
+                    />
                 </View>
             </View>
         );
@@ -153,17 +160,18 @@ const styles = StyleSheet.create({
     },
     header: {
         flex: 0.1,
-        top: 50,
-        left: 25
+        top: 70,
+        left: 50
     },
     headerText: {
         color: '#D22624',
         fontSize: 53,
         fontWeight: 'bold',
+        paddingBottom: 22,
     },
     body: {
         flex: 0.8,
-        marginTop: 45,
+        marginTop: 100,
     },
     addMealButton: {
         backgroundColor: "#D22624",
@@ -172,9 +180,9 @@ const styles = StyleSheet.create({
         borderRadius: 100,
         alignItems: "center",
         alignSelf: "flex-end",
-        marginRight: 25,
+        marginRight: 30,
         position: "relative",
-        bottom: 25,
+        bottom: 30,
     },
     modalView: {
         margin: 20,

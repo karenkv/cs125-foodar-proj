@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     header: {
         flex: 0.1,
         position: "relative",
-        top: 40,
+        top: 70,
         left: 50,
         flexDirection: "column",
         alignContent: "flex-start",
@@ -165,7 +165,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     body: {
-        flex: 0.8
+        flex: 0.8,
+        paddingTop: 20
     },
     footer: {
         flex: 0.1

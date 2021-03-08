@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 import { Image, Button, View, Text, StyleSheet } from 'react-native';
+import CustomButton from './CustomButton';
 
 import SwipeCards from "react-native-swipe-cards-deck";
 
@@ -38,10 +39,15 @@ class NoMoreCards extends Component {
   render(){
     return (
       <View>
-        <Text style={styles.NoMoreCards}>Thanks for letting us know!</Text>
-        <Button
-          title="Done"
+        <Text style={styles.NoMoreCards}>thanks for letting us know!</Text>
+        <CustomButton
+          title="done"
           onPress={() => this.props.navigation.navigate('Home')}
+          style={{ 
+            backgroundColor: "#FAF9F5", 
+            maxWidth: 75, 
+            alignSelf: "center" 
+          }} 
         />
       </View>
     )
@@ -52,13 +58,13 @@ export default class UserPreferencesOnboarding extends Component {
   constructor(props) {
     super(props);
     const foodPrefOptions = [
-      { text: "Dairy", uri: "https://cdn-a.william-reed.com/var/wrbm_gb_food_pharma/storage/images/publications/food-beverage-nutrition/nutraingredients.com/news/research/global-study-links-high-fat-dairy-consumption-to-blood-and-heart-health/11403932-1-eng-GB/Global-study-links-high-fat-dairy-consumption-to-blood-and-heart-health.jpg" },
-      { text: "Nuts", uri: "https://selecthealth.org/-/media/selecthealth82/article/post/2017/05/nuts_blog_lg.ashx"},
-      { text: "Low-Carb", uri: "https://cdn.pixabay.com/photo/2015/01/03/16/56/bread-587597__340.jpg" },
-      { text: "Seafood", uri: "https://miro.medium.com/max/800/1*qa8T3nnBWaMHV63xKS-Abg.jpeg" }, 
-      { text: "Red Meat", uri: "https://cdn.pixabay.com/photo/2018/02/08/15/01/meat-3139640_1280.jpg" },
-      { text: "Vegetarian", uri: "https://cdn.pixabay.com/photo/2016/10/31/18/23/salad-1786327__340.jpg" },
-      { text: "Vegan", uri: "https://live.staticflickr.com/7837/47227303852_b36d09aeb8_b.jpg" },
+      { text: "dairy", uri: "https://cdn-a.william-reed.com/var/wrbm_gb_food_pharma/storage/images/publications/food-beverage-nutrition/nutraingredients.com/news/research/global-study-links-high-fat-dairy-consumption-to-blood-and-heart-health/11403932-1-eng-GB/Global-study-links-high-fat-dairy-consumption-to-blood-and-heart-health.jpg" },
+      { text: "nuts", uri: "https://selecthealth.org/-/media/selecthealth82/article/post/2017/05/nuts_blog_lg.ashx"},
+      { text: "low-carb", uri: "https://cdn.pixabay.com/photo/2015/01/03/16/56/bread-587597__340.jpg" },
+      { text: "seafood", uri: "https://miro.medium.com/max/800/1*qa8T3nnBWaMHV63xKS-Abg.jpeg" }, 
+      { text: "red meat", uri: "https://cdn.pixabay.com/photo/2018/02/08/15/01/meat-3139640_1280.jpg" },
+      { text: "vegetarian", uri: "https://cdn.pixabay.com/photo/2016/10/31/18/23/salad-1786327__340.jpg" },
+      { text: "vegan", uri: "https://live.staticflickr.com/7837/47227303852_b36d09aeb8_b.jpg" },
     ];
     this.state = {
       cards: foodPrefOptions
@@ -66,12 +72,12 @@ export default class UserPreferencesOnboarding extends Component {
   }
 
   handleYup (card) {
-    console.log(`Like for ${card.text}`)
+    console.log(`like for ${card.text}`)
     return true;
   }
 
   handleNope (card) {
-    console.log(`Dislike for ${card.text}`)
+    console.log(`dislike for ${card.text}`)
     return true;
   }
   
@@ -100,7 +106,11 @@ export default class UserPreferencesOnboarding extends Component {
           yupTextStyle={styles.yupText}
           nopeTextStyle={styles.nopeText}
         />
-        <Text style={styles.caption}>Swipe right on foods you like and left on foods you dislike</Text>
+        <Text style={styles.caption}>swipe right on foods you like and left on foods you dislike</Text>
+        <CustomButton 
+          title="back"
+          onPress={() => this.props.navigation.navigate('Signup')}
+        />
     </View>
     );
   }
@@ -181,5 +191,6 @@ const styles = StyleSheet.create({
     position:"relative",
     bottom: 30,
     marginHorizontal: 80,
+    textAlign: "center"
   },
 });

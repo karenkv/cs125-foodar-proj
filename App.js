@@ -9,21 +9,24 @@ import Initial from "./components/Initial";
 import Profile from "./components/Profile";
 import UserPreferencesOnboarding from "./components/UserPreferencesOnboarding";
 import Search from "./components/Search";
-import SetUpProfile from "./components/SetUpProfile";
+import Signup from "./components/Signup";
 
 const Stack = createStackNavigator();
 
 export default class App extends Component {
   render() {
     return <NavigationContainer> 
-      <Stack.Navigator>
-        <Stack.Screen name="Initial" component={Initial} options={{headerShown: false,}}/>
-        <Stack.Screen name="Login" component={Login} options={{headerShown: false,}}/>
-        <Stack.Screen name="Set Up" component={SetUpProfile} options={{headerShown: false,}}/>
-        <Stack.Screen name="UserPreferencesOnboarding" component={UserPreferencesOnboarding} options={{headerShown: false,}}/>
-        <Stack.Screen name="Home" component={Home} options={{headerShown: false,}}/>
-        <Stack.Screen name="Search" component={Search} options={{headerShown: false,}}/>
-        <Stack.Screen name="Profile" component={Profile} options={{headerShown: false,}}/>
+      <Stack.Navigator
+        initialRouteName="Initial"
+        screenOptions={{headerShown: false}}
+      >
+        <Stack.Screen name="Initial" component={Initial} />
+        <Stack.Screen name="Signup" component={Signup} />
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="UserPreferencesOnboarding" component={UserPreferencesOnboarding} />
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Search" component={Search} />
+        <Stack.Screen name="Profile" component={Profile} />
       </Stack.Navigator>
     </NavigationContainer>;
   }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Button, View, StyleSheet } from 'react-native';
 
-export default class SaveButton extends Component {
+export default class CustomButton extends Component {
     constructor(props) {
         super(props);
         this.onPress = props.onPress != null ? props.onPress : () => {console.log("save button pressed");};
@@ -12,7 +12,7 @@ export default class SaveButton extends Component {
         return (
             <View style={[ this.style, styles.buttonContainer]}>
                 <Button 
-                    title="save"
+                    title={this.props.title}
                     color="#D4947C"
                     onPress={ () => {
                         this.onPress();
@@ -29,6 +29,8 @@ const styles = StyleSheet.create({
         width: 112,
         borderWidth: 1,
         borderRadius: 25,
-        borderColor: "#D6CBA8"
+        borderColor: "#D6CBA8",
+        padding: 5,
+        margin: 5
     },
 });

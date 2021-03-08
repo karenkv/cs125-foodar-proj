@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TextInput, Button } from 'react-native';
 import Navigation from './Navigation';
-import SaveButton from './SaveButton';
+import CustomButton from './CustomButton';
+
+import auth from '@react-native-firebase/auth';
 
 export default class Profile extends Component {
     constructor(props) {
@@ -15,6 +17,10 @@ export default class Profile extends Component {
 
     saveProfile() {
         console.log("profile saved");
+    }
+
+    signOut() {
+        auth().signOut().then(() => console.log('User signed out!'));
     }
 
     render() {
@@ -77,9 +83,17 @@ export default class Profile extends Component {
                                 placeholder="average activity level"
                                 placeholderTextColor={this.placeholderTextColor}
                             />
-                            <SaveButton 
+                            <CustomButton 
+                                title="save"
                                 style={{alignSelf: "center", marginVertical: 12}}
                                 onPress={ this.saveProfile }
+                            />
+                            <CustomButton 
+                                title="log out"
+                                style={{alignSelf: "center", marginVertical: 12}}
+                                onPress={
+                                    () => { this.props.navigation.navigate('Initial'); this.signOut(); }
+                                }
                             />
                         </View>
                     </ScrollView>
@@ -109,9 +123,9 @@ const styles = StyleSheet.create({
     header: {
         flex: 0.1,
         position: "relative",
-        top: 30,
+        top: 70,
         left: 50,
-        marginBottom: 25,
+        marginBottom: 45,
         paddingBottom: 12,
         minHeight: 45,
     },
@@ -162,9 +176,6 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         position: "relative",
         marginBottom:15,
-    },
-    saveButton: {
-
     },
     footer: {
         flex: 0.1,
