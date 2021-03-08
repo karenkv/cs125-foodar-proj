@@ -25,15 +25,32 @@ export default class Home extends Component {
         this.state = {
             modalVisible: false,
             calories: 2000,
-            carbs: 150,
-            protein: 150,
-            fat: 50
+            carbs: 0,
+            protein: 0,
+            fat: 0,
+            calorieInput: 0,
+            carbsInput: 0,
+            proteinInput: 0,
+            fatInput: 0,
         };
     }
 
     setModalVisible = (visible) => {
         this.setState({ modalVisible: visible });
         console.log(this.state.modalVisible);
+    }
+
+    handleChange=(text, stateProp)=>{
+        this.setState({
+          [stateProp]: text
+        });
+    }
+
+    saveMeal() {
+        this.setState({calories: this.state.calories - parseInt(this.state.calorieInput)});
+        this.setState({carbs: this.state.carbs + parseInt(this.state.carbsInput)});
+        this.setState({protein: this.state.protein + parseInt(this.state.proteinInput)});
+        this.setState({fat: this.state.fat + parseInt(this.state.fatInput)});
     }
 
     renderModal() {
@@ -66,21 +83,25 @@ export default class Home extends Component {
                             style={styles.textInput}
                             placeholder="calories"
                             placeholderTextColor={this.placeholderTextColor}
+                            onChangeText={(text)=>this.handleChange(text, 'calorieInput')}
                         />
                         <TextInput
                             style={styles.textInput}
                             placeholder="carbs"
                             placeholderTextColor={this.placeholderTextColor}
+                            onChangeText={(text)=>this.handleChange(text, 'carbsInput')}
                         />
                         <TextInput
                             style={styles.textInput}
                             placeholder="protein"
                             placeholderTextColor={this.placeholderTextColor}
+                            onChangeText={(text)=>this.handleChange(text, 'proteinInput')}
                         />
                         <TextInput
                             style={styles.textInput}
                             placeholder="fat"
                             placeholderTextColor={this.placeholderTextColor}
+                            onChangeText={(text)=>this.handleChange(text, 'fatInput')}
                         />
                     </View>
                     <CustomButton
@@ -90,6 +111,10 @@ export default class Home extends Component {
                             maxWidth: 75, 
                             alignSelf: "center" 
                         }} 
+                        onPress={() => {
+                            this.saveMeal();
+                            this.setModalVisible(false);
+                        }}
                     />
                 </View>
             </View>
@@ -121,8 +146,8 @@ export default class Home extends Component {
                         </View>
                         <View style={styles.nutrition}>
                             <Text style={{fontSize: 24}}>{this.state.carbs} g carbs</Text>
-                            <Text style={{fontSize: 24}}>{this.state.carbs} g protein</Text>
-                            <Text style={{fontSize: 24}}>{this.state.carbs} g fat</Text>
+                            <Text style={{fontSize: 24}}>{this.state.protein} g protein</Text>
+                            <Text style={{fontSize: 24}}>{this.state.fat} g fat</Text>
                         </View>
                         <View style={styles.date}>
                             <Text style={{fontSize: 18}}>{this.getDate()}</Text>
