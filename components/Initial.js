@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Button, View, Text, Image, StyleSheet } from 'react-native';
+import CustomButton from './CustomButton';
 
 export default class Initial extends Component {
     render() {
@@ -16,14 +17,12 @@ export default class Initial extends Component {
                     </Text>
                 </View>
                 <View style={styles.footer}>
-                    <Button
-                        color="#D4947C"
+                    <CustomButton
                         title="login"
                         onPress={() => this.props.navigation.navigate('Login')}
                         accessibilityLabel="Click to login to foodar"
                     />
-                    <Button
-                        color="#D4947C"
+                    <CustomButton
                         title="sign up"
                         onPress={() => this.props.navigation.navigate('Signup')}
                         accessibilityLabel="Click to sign up for foodar"
@@ -60,5 +59,7 @@ const styles = StyleSheet.create({
     },
     footer: {
         flex: 0.2,
+        alignItems: "center",
+        justifyContent: "center"
     }
 });

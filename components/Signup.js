@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Image, StyleSheet, View, Text, TextInput, SafeAreaView, Button } from 'react-native';
+import CustomButton from './CustomButton';
 
 export default class Signup extends Component {
     constructor(props) {
@@ -45,8 +46,14 @@ export default class Signup extends Component {
             />
           </View>
           <View style={styles.bottom}>
-            <Button title="Submit"
-              style={{alignSelf: "center", position: "relative", top:0}}
+            <CustomButton 
+              title="back"
+              onPress={() => this.props.navigation.navigate('Initial')}
+              accessibilityLabel="Click to go back to initial screen"
+            />
+            <CustomButton 
+              title="submit"
+              accessibilityLabel="Click to continue user signup with preferences"
               onPress={() => {
                 this.props.navigation.navigate('UserPreferencesOnboarding');
                 console.log("User information submitted!");
@@ -104,8 +111,9 @@ const styles = StyleSheet.create({
   },
   bottom: { 
     position: "relative",
-    bottom:0,
+    bottom: 0,
     marginTop: 400,
     marginBottom: 25,
+    alignItems: "center",
   }
 });

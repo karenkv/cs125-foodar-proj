@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Button, View, Text, TextInput, Image, StyleSheet } from 'react-native';
+import CustomButton from './CustomButton';
 
 export default class Login extends Component {
     render() {
@@ -25,13 +26,13 @@ export default class Login extends Component {
                     />
                 </View>
                 <View style={styles.footer}>
-                    <Button title="back"
-                        color="#D4947C"
+                    <CustomButton 
+                        title="back"
                         onPress={() => this.props.navigation.navigate('Initial')}
                         accessibilityLabel="Click to go back to initial screen"
                     />
-                    <Button title="login"
-                        color="#D4947C"
+                    <CustomButton 
+                        title="login"
                         onPress={() => this.props.navigation.navigate('Home')}
                         accessibilityLabel="Click to submit login information"
                     />

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, Button, Pressable, Modal, TextInput } from 'react-native';
 import Navigation from './Navigation';
-import SaveButton from './SaveButton';
+import CustomButton from './CustomButton';
 
 export default class Home extends Component {
     constructor(props) {
@@ -63,7 +63,14 @@ export default class Home extends Component {
                             placeholderTextColor={this.placeholderTextColor}
                         />
                     </View>
-                    <SaveButton style={{ backgroundColor: "#FAF9F5", maxWidth: 75, alignSelf: "center" }} />
+                    <CustomButton
+                        title="save"
+                        style={{ 
+                            backgroundColor: "#FAF9F5", 
+                            maxWidth: 75, 
+                            alignSelf: "center" 
+                        }} 
+                    />
                 </View>
             </View>
         );
@@ -117,16 +124,17 @@ const styles = StyleSheet.create({
     header: {
         flex: 0.1,
         top: 70,
-        left: 20
+        left: 50
     },
     headerText: {
         color: '#D22624',
         fontSize: 53,
         fontWeight: 'bold',
+        paddingBottom: 22,
     },
     body: {
         flex: 0.8,
-        marginTop: 70,
+        marginTop: 100,
     },
     addMealButton: {
         backgroundColor: "#D22624",
@@ -135,9 +143,9 @@ const styles = StyleSheet.create({
         borderRadius: 100,
         alignItems: "center",
         alignSelf: "flex-end",
-        marginRight: 15,
+        marginRight: 30,
         position: "relative",
-        bottom: 15,
+        bottom: 30,
     },
     modalView: {
         margin: 20,
