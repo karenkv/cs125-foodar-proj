@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, Button, Pressable, Modal, TextInput } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, Pressable, Modal, TextInput } from 'react-native';
 import Navigation from './Navigation';
 import SaveButton from './SaveButton';
 import Config from 'react-native-config';
@@ -15,11 +15,19 @@ const scopes = ['https://www.googleapis.com/auth/fitness.activity.read',
     'https://www.googleapis.com/auth/fitness.nutrition.write'];
 const oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
 
+const DAYS = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+const MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", 
+    "september", "october", "november", "december"];
+
 export default class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
             modalVisible: false,
+            calories: 2000,
+            carbs: 150,
+            protein: 150,
+            fat: 50
         };
     }
 
@@ -81,6 +89,14 @@ export default class Home extends Component {
         );
     }
 
+    getDate = () => {
+        let day = new Date(Date.now()).getDay();
+        let dd = new Date(Date.now()).getDate();
+        let mm = new Date(Date.now()).getMonth();
+        let yy = new Date(Date.now()).getFullYear();
+        return `${DAYS[day]}, ${dd} ${MONTHS[mm]} ${yy}`;
+    }
+
     render() {
         const modalVisible = this.state.modalVisible;
         return (
@@ -90,6 +106,21 @@ export default class Home extends Component {
                     <Image source={require('../assets/divider.png')} />
                 </View>
                 <View style={styles.body}>
+                    <ScrollView>
+                        <View style={styles.caloriesRemaining}>
+                            <Text style={{color: "#FAF9F5", fontSize: 24, textAlign: "center"}}>
+                                {this.state.calories}{`\ncalories\nleft`}
+                                </Text>
+                        </View>
+                        <View style={styles.nutrition}>
+                            <Text style={{fontSize: 24}}>{this.state.carbs} g carbs</Text>
+                            <Text style={{fontSize: 24}}>{this.state.carbs} g protein</Text>
+                            <Text style={{fontSize: 24}}>{this.state.carbs} g fat</Text>
+                        </View>
+                        <View style={styles.date}>
+                            <Text style={{fontSize: 18}}>{this.getDate()}</Text>
+                            </View>
+                    </ScrollView>
                     <Modal
                         animationType="fade"
                         transparent={true}
@@ -196,5 +227,24 @@ const styles = StyleSheet.create({
     },
     footer: {
         flex: 0.1
+    },
+    caloriesRemaining: {
+        alignItems:'center', 
+        alignSelf: 'center',
+        justifyContent:'center',  
+        backgroundColor:'#D4947C',     
+        width: 250,
+        height: 250, 
+        marginTop: 50,
+        borderRadius: 150,
+    },
+    nutrition: {
+        alignItems:'center', 
+        justifyContent:'center',
+        margin: 25
+    },
+    date: {
+        alignItems:'center', 
+        justifyContent:'center',
     }
 });
