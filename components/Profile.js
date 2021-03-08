@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TextInput } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, TextInput, Button } from 'react-native';
 import Navigation from './Navigation';
 import SaveButton from './SaveButton';
 
