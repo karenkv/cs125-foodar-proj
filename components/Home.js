@@ -28,10 +28,12 @@ export default class Home extends Component {
             carbs: 0,
             protein: 0,
             fat: 0,
-            calorieInput: 0,
+            caloriesInput: 0,
             carbsInput: 0,
             proteinInput: 0,
             fatInput: 0,
+            recommendedMeal: 'burger',
+            recommendedCalories: 500
         };
     }
 
@@ -47,7 +49,7 @@ export default class Home extends Component {
     }
 
     saveMeal() {
-        this.setState({calories: this.state.calories - parseInt(this.state.calorieInput)});
+        this.setState({calories: this.state.calories - parseInt(this.state.caloriesInput)});
         this.setState({carbs: this.state.carbs + parseInt(this.state.carbsInput)});
         this.setState({protein: this.state.protein + parseInt(this.state.proteinInput)});
         this.setState({fat: this.state.fat + parseInt(this.state.fatInput)});
@@ -83,7 +85,7 @@ export default class Home extends Component {
                             style={styles.textInput}
                             placeholder="calories"
                             placeholderTextColor={this.placeholderTextColor}
-                            onChangeText={(text)=>this.handleChange(text, 'calorieInput')}
+                            onChangeText={(text)=>this.handleChange(text, 'caloriesInput')}
                         />
                         <TextInput
                             style={styles.textInput}
@@ -151,7 +153,12 @@ export default class Home extends Component {
                         </View>
                         <View style={styles.date}>
                             <Text style={{fontSize: 18}}>{this.getDate()}</Text>
-                            </View>
+                        </View>
+                        <View style={styles.recommend}>
+                            <Text style={{fontSize: 18, fontWeight: 'bold'}}>recommended meal</Text>
+                            <Text style={{fontSize: 18, paddingTop: 10, paddingBottom: 10}}>{this.state.recommendedMeal}</Text>
+                            <Text style={{fontSize: 14, fontStyle: 'italic'}}>~{this.state.recommendedCalories} calories</Text>
+                        </View>
                     </ScrollView>
                     <Modal
                         animationType="fade"
@@ -268,16 +275,27 @@ const styles = StyleSheet.create({
         backgroundColor:'#D4947C',     
         width: 250,
         height: 250, 
-        marginTop: 50,
+        marginTop: 30,
         borderRadius: 150,
     },
     nutrition: {
         alignItems:'center', 
         justifyContent:'center',
-        margin: 25
+        margin: 15
     },
     date: {
         alignItems:'center', 
         justifyContent:'center',
+    },
+    recommend: {
+        alignItems:'center', 
+        alignSelf: 'center',
+        justifyContent:'center',  
+        backgroundColor:'#FFFFFF',     
+        width: 250,
+        height: 100, 
+        marginTop: 15,
+        borderRadius: 10,
+        padding: 15
     }
 });
