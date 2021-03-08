@@ -85,7 +85,7 @@ export default class UserPreferencesOnboarding extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-            <Text style={styles.title}>sign up</Text>
+            <Text style={styles.title}>preferences</Text>
             <Image source={require('../assets/divider.png')}/>
         </View>
         <SwipeCards
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "#D22624",
-    fontSize: 72,
+    fontSize: 53,
     paddingBottom: 100,
   },
   card: {
