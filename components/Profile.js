@@ -83,6 +83,12 @@ export default class Profile extends Component {
                             />
                         </View>
                     </ScrollView>
+                    <ScrollView>
+                        <Button
+                            title="Preferences"
+                            onPress={() => this.props.navigation.navigate('UserPreferencesOnboarding')}
+                        />
+                    </ScrollView>
                 </View>
                 <View style={styles.footer}>
                     <Navigation navigation={this.props.navigation}/>

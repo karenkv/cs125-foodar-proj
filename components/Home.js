@@ -90,12 +90,6 @@ export default class Home extends Component {
                     <Image source={require('../assets/divider.png')} />
                 </View>
                 <View style={styles.body}>
-                    <ScrollView>
-                        <Button
-                            title="Preferences"
-                            onPress={() => this.props.navigation.navigate('UserPreferencesOnboarding')}
-                        />
-                    </ScrollView>
                     <Modal
                         animationType="fade"
                         transparent={true}
