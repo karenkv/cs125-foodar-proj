@@ -107,6 +107,10 @@ export default class UserPreferencesOnboarding extends Component {
           nopeTextStyle={styles.nopeText}
         />
         <Text style={styles.caption}>swipe right on foods you like and left on foods you dislike</Text>
+        <CustomButton 
+          title="back"
+          onPress={() => this.props.navigation.navigate('Signup')}
+        />
     </View>
     );
   }

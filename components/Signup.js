@@ -4,35 +4,75 @@ import CustomButton from './CustomButton';
 
 import auth from '@react-native-firebase/auth';
 
+function LoginApp() {
+  // Set an initializing state whilst Firebase connects
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState();
+
+  // Handle user state changes
+  function onAuthStateChanged(user) {
+    setUser(user);
+    if (initializing) setInitializing(false);
+  }
+
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber; // unsubscribe on unmount
+  }, []);
+
+  if (initializing) return null;
+
+  if (!user) {
+    return (
+      <View>
+        <Text>Login</Text>
+      </View>
+    );
+  }
+
+  return (
+    <View>
+      <Text>Welcome {user.email}</Text>
+    </View>
+  );
+}
+
 export default class Signup extends Component {
     constructor(props) {
       super(props);
       this.placeholderTextColor = "#ACACAC";
-      this.state = {
+      this.state = { 
         username: "",
-        password: "",
+        password: ""
       }
     }
 
-    createUser = () => {
+    createUser() {
+      console.log("Asdfsadfasdfasfas");
       auth()
-      .createUserWithEmailAndPassword(this.state.username, this.state.password)
-      .then(() => {
-          console.log('User account created & signed in!');
-      })
-      .catch(error => {
-          if (error.code === 'auth/email-already-in-use') {
-          console.log('That email address is already in use!');
-          }
+        .createUserWithEmailAndPassword(this.state.username, this.state.password)
+          .then(() => {
+              console.log('User account created & signed in!');
+          })
+          .catch(error => {
+              if (error.code === 'auth/email-already-in-use') {
+              console.log('That email address is already in use!');
+              }
 
-          if (error.code === 'auth/invalid-email') {
-          console.log('That email address is invalid!');
-          }
+              if (error.code === 'auth/invalid-email') {
+              console.log('That email address is invalid!');
+              }
 
-          console.error(error);
-      });
+              console.error(error);
+          });
     }
 
+    handleChange=(text, stateProp)=>{
+      this.setState({
+        [stateProp]: text
+      })
+    }
+  
     render() {
       return (
         <SafeAreaView styles={styles.container}>
@@ -43,16 +83,14 @@ export default class Signup extends Component {
           <View style={styles.textInputContainer}>
             <TextInput 
               style={styles.textInput} 
-              keyboardType="email"
               placeholder="email"
-              onChangeText={(text) => this.setState({username:text})}
+              onChangeText={(text)=>this.handleChange(text, 'username')}
               placeholderTextColor={this.placeholderTextColor}
             />
             <TextInput 
               style={styles.textInput} 
-              textContentType="password"
               placeholder="password"
-              onChangeText={(text) => this.setState({password:text})}
+              onChangeText={(text)=>this.handleChange(text, 'password')}
               placeholderTextColor={this.placeholderTextColor}
             />
             <TextInput 
@@ -94,9 +132,8 @@ export default class Signup extends Component {
               title="next"
               accessibilityLabel="Click to continue user signup with preferences"
               onPress={() => {
-                this.createUser;
+                this.createUser();
                 this.props.navigation.navigate('UserPreferencesOnboarding');
-                console.log("User information submitted!");
               }}/>
           </View>
         </SafeAreaView>
@@ -152,7 +189,7 @@ const styles = StyleSheet.create({
   bottom: { 
     position: "relative",
     bottom: 0,
-    marginTop: 400,
+    marginTop: 450,
     marginBottom: 25,
     alignItems: "center",
   }
