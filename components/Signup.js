@@ -1,12 +1,78 @@
 import React, { Component } from 'react';
 import { Image, StyleSheet, View, Text, TextInput, SafeAreaView, Button } from 'react-native';
+import CustomButton from './CustomButton';
 
-export default class SetUpProfile extends Component {
+import auth from '@react-native-firebase/auth';
+
+function LoginApp() {
+  // Set an initializing state whilst Firebase connects
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState();
+
+  // Handle user state changes
+  function onAuthStateChanged(user) {
+    setUser(user);
+    if (initializing) setInitializing(false);
+  }
+
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber; // unsubscribe on unmount
+  }, []);
+
+  if (initializing) return null;
+
+  if (!user) {
+    return (
+      <View>
+        <Text>Login</Text>
+      </View>
+    );
+  }
+
+  return (
+    <View>
+      <Text>Welcome {user.email}</Text>
+    </View>
+  );
+}
+
+export default class Signup extends Component {
     constructor(props) {
       super(props);
       this.placeholderTextColor = "#ACACAC";
+      this.state = { 
+        username: "",
+        password: ""
+      }
     }
 
+    createUser() {
+      console.log("Asdfsadfasdfasfas");
+      auth()
+        .createUserWithEmailAndPassword(this.state.username, this.state.password)
+          .then(() => {
+              console.log('User account created & signed in!');
+          })
+          .catch(error => {
+              if (error.code === 'auth/email-already-in-use') {
+              console.log('That email address is already in use!');
+              }
+
+              if (error.code === 'auth/invalid-email') {
+              console.log('That email address is invalid!');
+              }
+
+              console.error(error);
+          });
+    }
+
+    handleChange=(text, stateProp)=>{
+      this.setState({
+        [stateProp]: text
+      })
+    }
+  
     render() {
       return (
         <SafeAreaView styles={styles.container}>
@@ -15,6 +81,18 @@ export default class SetUpProfile extends Component {
             <Image source={require('../assets/divider.png')}/>
           </View>
           <View style={styles.textInputContainer}>
+            <TextInput 
+              style={styles.textInput} 
+              placeholder="email"
+              onChangeText={(text)=>this.handleChange(text, 'username')}
+              placeholderTextColor={this.placeholderTextColor}
+            />
+            <TextInput 
+              style={styles.textInput} 
+              placeholder="password"
+              onChangeText={(text)=>this.handleChange(text, 'password')}
+              placeholderTextColor={this.placeholderTextColor}
+            />
             <TextInput 
               style={styles.textInput} 
               keyboardType="numbers-and-punctuation"
@@ -45,12 +123,18 @@ export default class SetUpProfile extends Component {
             />
           </View>
           <View style={styles.bottom}>
-            <Button title="Submit"
-              style={{alignSelf: "center", position: "relative", top:0}}
+            <CustomButton 
+              title="back"
+              onPress={() => this.props.navigation.navigate('Initial')}
+              accessibilityLabel="Click to go back to initial screen"
+            />
+            <CustomButton 
+              title="next"
+              accessibilityLabel="Click to continue user signup with preferences"
               onPress={() => {
+                this.createUser();
                 this.props.navigation.navigate('UserPreferencesOnboarding');
-                console.log("User information submitted!");
-                }}/>
+              }}/>
           </View>
         </SafeAreaView>
       )
@@ -104,8 +188,9 @@ const styles = StyleSheet.create({
   },
   bottom: { 
     position: "relative",
-    bottom:0,
-    marginTop: 400,
+    bottom: 0,
+    marginTop: 450,
     marginBottom: 25,
+    alignItems: "center",
   }
 });
