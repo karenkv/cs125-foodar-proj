@@ -1,23 +1,20 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, Pressable, Modal, TextInput } from 'react-native';
 import Navigation from './Navigation';
-import Config from 'react-native-config';
 import CustomButton from './CustomButton';
+import AppleHealthKit from 'react-native-health';
 
-const GOOGLE_CLIENT_ID = Config.GOOGLE_CLIENT_ID;
-const scopes = ['https://www.googleapis.com/auth/fitness.activity.read',
-    'https://www.googleapis.com/auth/fitness.activity.write',
-    'https://www.googleapis.com/auth/fitness.body.read',
-    'https://www.googleapis.com/auth/fitness.body.write',
-    'https://www.googleapis.com/auth/fitness.location.read',
-    'https://www.googleapis.com/auth/fitness.location.write',
-    'https://www.googleapis.com/auth/fitness.nutrition.read',
-    'https://www.googleapis.com/auth/fitness.nutrition.write'];
-const oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
 
 const DAYS = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
 const MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", 
     "september", "october", "november", "december"];
+
+const options = {
+    permissions: {
+        read: ["Height", "Weight", "StepCount"],
+        write: ["Height", "Weight", "StepCount"]
+    }
+};
 
 export default class Home extends Component {
     constructor(props) {
@@ -33,8 +30,66 @@ export default class Home extends Component {
             proteinInput: 0,
             fatInput: 0,
             recommendedMeal: 'burger',
-            recommendedCalories: 500
+            recommendedCalories: 500,
+            height: 0,
+            weight: 0,
+            steps: 0,
         };
+    }
+
+    async componentDidMount() {
+        AppleHealthKit.initHealthKit(options, (err, results) => {
+            if (err) {
+                console.log("error initializing Healthkit: ", err);
+                return;
+            }
+            this.getHeight().then(fun1 => {
+                if(fun1){
+                    this.getWeight().then(fun2 => {
+                        if(fun2) {
+                            this.setState({weight: results.value});
+                            console.log("done");
+                        }
+                    })
+                }
+            });
+        });
+    }
+
+    async getSteps() {
+        let d = new Date();
+        const dateOpt = {date: new Date(d.setDate(d.getDate() - i)).toISOString()};
+        AppleHealthKit.getStepCount(dateOpt, (err, results) => {
+            if (err) {
+                console.log("error getting steps: ", dateOpt);
+                return;
+            }
+            this.setState({height: results.value});
+            console.log("steps: ", results.value);
+            return true;
+        });
+    }
+
+    async getHeight() {
+        AppleHealthKit.getLatestHeight(null, (err, results) => {
+            if (err) {
+                console.log("error getting latest height: ", err);
+                return;
+            }
+            console.log("height: ", results.value);
+            return results.value;
+        });
+    }
+
+    async getWeight() {
+        AppleHealthKit.getLatestWeight(null, (err, results) => {
+            if (err) {
+                console.log("error getting latest weight: ", err);
+                return;
+            }
+            console.log("weight: ", results.value);
+            return results.value;
+        });
     }
 
     setModalVisible = (visible) => {
