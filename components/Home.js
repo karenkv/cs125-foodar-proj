@@ -34,6 +34,7 @@ export default class Home extends Component {
             height: 0,
             weight: 0,
             steps: 0,
+            activity: ''
         };
     }
 
@@ -43,53 +44,72 @@ export default class Home extends Component {
                 console.log("error initializing Healthkit: ", err);
                 return;
             }
-            this.getHeight().then(fun1 => {
-                if(fun1){
-                    this.getWeight().then(fun2 => {
-                        if(fun2) {
-                            this.setState({weight: results.value});
-                            console.log("done");
-                        }
-                    })
+            this.fetchData();
+        });
+    }
+
+    fetchData = async () => {
+        await this.getHeight();
+        await this.getWeight();
+        for(i = 1; i < 8; i++) {
+            await this.getSteps(i);
+        }
+        await this.getActivity();
+    }
+
+    getSteps = (i) => {
+        return new Promise(resolve => {
+            let d = new Date();
+            const dateOpt = {date: new Date(d.setDate(d.getDate() - i)).toISOString()};
+            AppleHealthKit.getStepCount(dateOpt, (err, results) => {
+                if (err) {
+                    console.log("error getting steps: ", dateOpt);
+                    return;
                 }
+                console.log("steps: ", results.value);
+                this.setState({steps: this.state.steps += results.value}, () => { resolve() });
             });
         });
     }
 
-    async getSteps() {
-        let d = new Date();
-        const dateOpt = {date: new Date(d.setDate(d.getDate() - i)).toISOString()};
-        AppleHealthKit.getStepCount(dateOpt, (err, results) => {
-            if (err) {
-                console.log("error getting steps: ", dateOpt);
-                return;
-            }
-            this.setState({height: results.value});
-            console.log("steps: ", results.value);
-            return true;
+    getHeight = () => {
+        return new Promise(resolve => {
+            AppleHealthKit.getLatestHeight(null, (err, results) => {
+                if (err) {
+                    console.log("error getting latest height: ", err);
+                    return;
+                }
+                console.log("height: ", results.value);
+                this.setState({height: results.value}, () => { resolve() });
+            });
         });
     }
 
-    async getHeight() {
-        AppleHealthKit.getLatestHeight(null, (err, results) => {
-            if (err) {
-                console.log("error getting latest height: ", err);
-                return;
-            }
-            console.log("height: ", results.value);
-            return results.value;
+    getWeight = () => {
+        return new Promise(resolve => {
+            AppleHealthKit.getLatestWeight(null, (err, results) => {
+                if (err) {
+                    console.log("error getting latest weight: ", err);
+                    return;
+                }
+                console.log("weight: ", results.value);
+                this.setState({weight: results.value}, () => { resolve() });
+            });
         });
     }
 
-    async getWeight() {
-        AppleHealthKit.getLatestWeight(null, (err, results) => {
-            if (err) {
-                console.log("error getting latest weight: ", err);
-                return;
+    getActivity = () => {
+        const steps = this.state.steps / 6;
+        return new Promise(resolve => {
+            if(steps < 3000) {
+                this.setState({activity: 'low'}, () => { resolve() });
+            } else if(steps >= 3000 && this.state.steps < 7000) {
+                this.setState({activity: 'med'}, () => { resolve() });
+            } else {
+                this.setState({activity: 'high'}, () => { resolve() });
             }
-            console.log("weight: ", results.value);
-            return results.value;
         });
+
     }
 
     setModalVisible = (visible) => {
