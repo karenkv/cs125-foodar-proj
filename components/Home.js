@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, Pressable, Modal, TextInput } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, Pressable, Modal, TextInput, TouchableOpacity } from 'react-native';
 import Navigation from './Navigation';
 import Config from 'react-native-config';
 import CustomButton from './CustomButton';
@@ -53,6 +53,11 @@ export default class Home extends Component {
         this.setState({carbs: this.state.carbs + parseInt(this.state.carbsInput)});
         this.setState({protein: this.state.protein + parseInt(this.state.proteinInput)});
         this.setState({fat: this.state.fat + parseInt(this.state.fatInput)});
+    }
+
+    onPressRecommendation = () => {
+        console.log(`pressed meal recommendation for ${this.state.recommendedMeal}`);
+        this.props.navigation.navigate('Search', {searchText: this.state.recommendedMeal});
     }
 
     renderModal() {
@@ -154,11 +159,15 @@ export default class Home extends Component {
                         <View style={styles.date}>
                             <Text style={{fontSize: 18}}>{this.getDate()}</Text>
                         </View>
-                        <View style={styles.recommend}>
-                            <Text style={{fontSize: 18, fontWeight: 'bold'}}>recommended meal</Text>
-                            <Text style={{fontSize: 18, paddingTop: 10, paddingBottom: 10}}>{this.state.recommendedMeal}</Text>
-                            <Text style={{fontSize: 14, fontStyle: 'italic'}}>~{this.state.recommendedCalories} calories</Text>
-                        </View>
+                        <TouchableOpacity
+                            style={styles.recommend}
+                            onPress={this.onPressRecommendation}>
+                            <View style={styles.recommend}>
+                                <Text style={{fontSize: 18, fontWeight: 'bold'}}>recommended meal</Text>
+                                <Text style={{fontSize: 18, paddingTop: 10, paddingBottom: 10}}>{this.state.recommendedMeal}</Text>
+                                <Text style={{fontSize: 14, fontStyle: 'italic'}}>~{this.state.recommendedCalories} calories</Text>
+                            </View>
+                        </TouchableOpacity>
                     </ScrollView>
                     <Modal
                         animationType="fade"

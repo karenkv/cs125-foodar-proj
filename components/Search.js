@@ -13,9 +13,9 @@ export default class Search extends Component {
         this.state = {
             isLoading: true,
             origin: { latitude: 33.651381302843774, longitude: -117.83880949630442 }, // utc coordinates
-            searchText: "sushi",
+            searchText: props.route.params != null ? props.route.params.searchText : "sushi",
         };
-
+        console.log(this.state.searchText);
         config = {
             headers: { Authorization: `Bearer ${Config.YELP_API_KEY}`, },
             params: {
