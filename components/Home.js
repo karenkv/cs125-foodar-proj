@@ -234,6 +234,11 @@ export default class Home extends Component {
                             <Text style={{fontSize: 18, paddingTop: 10, paddingBottom: 10}}>{this.state.recommendedMeal}</Text>
                             <Text style={{fontSize: 14, fontStyle: 'italic'}}>~{this.state.recommendedCalories} calories</Text>
                         </View>
+                        <View style={styles.activity}>
+                            <Text style={{fontSize: 18, fontStyle: 'italic'}}>
+                                activity this week: {this.state.activity}
+                            </Text>
+                        </View>
                     </ScrollView>
                     <Modal
                         animationType="fade"
@@ -372,5 +377,10 @@ const styles = StyleSheet.create({
         marginTop: 15,
         borderRadius: 10,
         padding: 15
+    },
+    activity: {
+        alignItems:'center', 
+        justifyContent:'center',
+        marginTop: 25
     }
 });
