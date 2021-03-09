@@ -104,11 +104,16 @@ export default class UserPreferencesOnboarding extends Component {
           nopeTextStyle={styles.nopeText}
         />
         <Text style={styles.caption}>swipe right on foods you like and left on foods you dislike</Text>
-        <CustomButton 
-          title="back"
-          style={{position:"relative", bottom: 20 }}
-          onPress={() => this.props.navigation.navigate('Signup')}
-        />
+        <View style={styles.buttonContainer}>
+          <CustomButton 
+            title="back"
+            onPress={() => this.props.navigation.navigate('Signup')}
+          />
+            <CustomButton 
+            title="skip"
+            onPress={() => this.props.navigation.navigate('Home')}
+          />
+        </View>
     </View>
     );
   }
@@ -121,6 +126,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     backgroundColor: "#FAF9F5",
     alignItems: "center",
+    alignContent: "center",
     justifyContent: "center",
   },
   header: {
@@ -191,4 +197,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 80,
     textAlign: "center"
   },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    minWidth: 280,
+    position: "relative",
+    bottom: 25,
+  }
 });
