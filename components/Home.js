@@ -11,8 +11,8 @@ const MONTHS = ["january", "february", "march", "april", "may", "june", "july", 
 
 const options = {
     permissions: {
-        read: ["Height", "Weight", "StepCount"],
-        write: ["Height", "Weight", "StepCount"]
+        read: ["Height", "Weight", "StepCount", "BiologicalSex", "DateOfBirth"],
+        write: ["Height", "Weight", "StepCount", "BiologicalSex", "DateOfBirth"]
     }
 };
 
@@ -21,7 +21,7 @@ export default class Home extends Component {
         super(props);
         this.state = {
             modalVisible: false,
-            calories: 2000,
+            calories: 0,
             carbs: 0,
             protein: 0,
             fat: 0,
@@ -34,7 +34,10 @@ export default class Home extends Component {
             height: 0,
             weight: 0,
             steps: 0,
-            activity: ''
+            activity: '',
+            sex: '',
+            age: 0,
+            bmr: 0
         };
     }
 
@@ -49,12 +52,16 @@ export default class Home extends Component {
     }
 
     fetchData = async () => {
+        await this.getSex();
+        await this.getAge();
         await this.getHeight();
         await this.getWeight();
         for(i = 1; i < 8; i++) {
             await this.getSteps(i);
         }
         await this.getActivity();
+        await this.getBMR();
+        await this.getCalories();
     }
 
     getSteps = (i) => {
@@ -63,11 +70,34 @@ export default class Home extends Component {
             const dateOpt = {date: new Date(d.setDate(d.getDate() - i)).toISOString()};
             AppleHealthKit.getStepCount(dateOpt, (err, results) => {
                 if (err) {
-                    console.log("error getting steps: ", dateOpt);
+                    console.log("error getting steps: ", err);
                     return;
                 }
-                console.log("steps: ", results.value);
                 this.setState({steps: this.state.steps += results.value}, () => { resolve() });
+            });
+        });
+    }
+
+    getAge = () => {
+        return new Promise(resolve => {
+            AppleHealthKit.getDateOfBirth(null, (err, results) => {
+                if (err) {
+                    console.log("error getting latest age: ", err);
+                    return;
+                }
+                this.setState({age: results.age}, () => { resolve() });
+            });
+        });
+    }
+
+    getSex = () => {
+        return new Promise(resolve => {
+            AppleHealthKit.getBiologicalSex(null, (err, results) => {
+                if (err) {
+                    console.log("error getting latest age: ", err);
+                    return;
+                }
+                this.setState({sex: results.value}, () => { resolve() });
             });
         });
     }
@@ -79,7 +109,6 @@ export default class Home extends Component {
                     console.log("error getting latest height: ", err);
                     return;
                 }
-                console.log("height: ", results.value);
                 this.setState({height: results.value}, () => { resolve() });
             });
         });
@@ -92,7 +121,6 @@ export default class Home extends Component {
                     console.log("error getting latest weight: ", err);
                     return;
                 }
-                console.log("weight: ", results.value);
                 this.setState({weight: results.value}, () => { resolve() });
             });
         });
@@ -101,15 +129,48 @@ export default class Home extends Component {
     getActivity = () => {
         const steps = this.state.steps / 6;
         return new Promise(resolve => {
-            if(steps < 3000) {
+            if(steps < 1500) {
+                this.setState({activity: 'very low'}, () => { resolve() });
+            } else if(steps >= 1500 && steps < 3000) {
                 this.setState({activity: 'low'}, () => { resolve() });
-            } else if(steps >= 3000 && this.state.steps < 7000) {
-                this.setState({activity: 'med'}, () => { resolve() });
-            } else {
+            } else if(steps >= 3000 && steps < 6000) {
+                this.setState({activity: 'moderate'}, () => { resolve() });
+            } else if(steps >= 6000 && steps < 7500) {
                 this.setState({activity: 'high'}, () => { resolve() });
+            } else {
+                this.setState({activity: 'very high'}, () => { resolve() });
             }
         });
+    }
 
+    getBMR = () => {  
+        return new Promise(resolve => {
+            if(this.state.sex === 'female') {
+            this.setState({bmr: 
+                    66 + (6.3 * this.state.weight) + (12.9 * this.state.height) - (6.8 * this.state.age)},
+                    () => { resolve() });
+            } else {
+                this.setState({bmr: 
+                    65 + (4.3 * this.state.weight) + (4.7 * this.state.height) - (4.7 * this.state.age)},
+                    () => { resolve() });
+            }
+        });
+    }
+
+    getCalories = () => {
+        return new Promise(resolve => {
+            if(this.state.activity === 'very low') {
+                this.setState({calories: this.state.bmr * 1.2}, () => { resolve() });
+            } else if(this.state.activity === 'low') {
+                this.setState({calories: this.state.bmr * 1.375}, () => { resolve() });
+            } else if(this.state.activity === 'moderate') {
+                this.setState({calories: this.state.bmr * 1.55}, () => { resolve() });
+            } else if(this.state.activity === 'high') {
+                this.setState({calories: this.state.bmr * 1.725}, () => { resolve() });
+            } else {
+                this.setState({calories: this.state.bmr * 1.9}, () => { resolve() });
+            }
+        });
     }
 
     setModalVisible = (visible) => {
@@ -218,7 +279,7 @@ export default class Home extends Component {
                     <ScrollView>
                         <View style={styles.caloriesRemaining}>
                             <Text style={{color: "#FAF9F5", fontSize: 24, textAlign: "center"}}>
-                                {this.state.calories}{`\ncalories\nleft`}
+                                {Number.parseFloat(this.state.calories).toFixed(2)}{`\ncalories\nleft`}
                                 </Text>
                         </View>
                         <View style={styles.nutrition}>
