@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, FlatList } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, FlatList, Linking } from 'react-native';
 import Navigation from './Navigation';
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
@@ -13,16 +13,15 @@ export default class Search extends Component {
         this.state = {
             isLoading: true,
             origin: { latitude: 33.651381302843774, longitude: -117.83880949630442 }, // utc coordinates
-            searchText: "sushi",
+            searchText: props.route.params != null ? props.route.params.searchText : "sushi",
         };
-
         config = {
             headers: { Authorization: `Bearer ${Config.YELP_API_KEY}`, },
             params: {
                 term: this.state.searchText,
                 latitude: this.state.origin.latitude,
                 longitude: this.state.origin.longitude,
-                limit: 25,
+                limit: 20,
                 categories: "food,restaurants"
             },
         }
@@ -55,11 +54,11 @@ export default class Search extends Component {
     };
 
     fetchMarkerData() {
-        console.log("Fetching restaurants...");
+        console.log(`Fetching ${config.params.term} restaurants...`);
         return axios
             .get(YELP_API_URL, config)
             .then(responseJson => {
-                this.setState({ isLoading: false, results: responseJson.data.businesses });
+                this.setState({ isLoading: false, results: responseJson.data.businesses.filter(item => item.transactions.includes("delivery")) });
             })
             .catch(error => {
                 console.log(error);
@@ -96,7 +95,7 @@ export default class Search extends Component {
                     <View style={styles.searchContainer}>
                         <TextInput
                             style={styles.searchInput}
-                            placeholder="search 'sushi'"
+                            placeholder="search"
                             placeholderTextColor={this.placeholderTextColor}
                             onChangeText={text => this.changeSearchInput(text)}
                             onEndEditing={() => this.endEditing()}
@@ -116,18 +115,37 @@ export default class Search extends Component {
                             }
                             return (
                                 <TouchableOpacity
-                                    onPress={() => console.log(`pressed ${item.name}`)}>
-                                    <View style={styles.listItem}>
-                                        <Text style={styles.listItemName}>{item.name}</Text>
-                                        <Text style={styles.listItemPhone}>{item.display_phone != "" ? item.display_phone : "-"}</Text>
+                                    onPress={() => {
+                                        console.log(`pressed ${item.name}`);
+                                        Linking.openURL(item.url);
+                                    }}>
+                                    <View style={styles.listItemContainer}>
+                                        <View style={styles.listItem}>
+                                            <Text numberOfLines={1} style={styles.listItemName}>{item.name}</Text>
+                                            <Text style={styles.listItemPhone}>{item.display_phone != "" ? item.display_phone : "-"}</Text>
+                                            {/* <Text style={styles.listItemDetails}>
+                                                { item.location.address1 != "" 
+                                                    ? `${item.location.address1}\n${item.location.city}, ${item.location.state} ${item.location.zip_code}`
+                                                    : "-"}
+                                            </Text> */}
+                                            <Text style={styles.listItemDetails}>{(item.transactions.includes("delivery") ? "✓ delivery" : "ⅹ delivery")
+                                                + "\t" + (item.transactions.includes("pickup") ? "✓ pickup" : "ⅹ pickup")}
+                                            </Text>
+                                        </View>
+                                        <View style={styles.listItemImgContainer}>
+                                            <Image 
+                                                style={styles.listItemImg}
+                                                source={{ uri: String(item.image_url) }} 
+                                            />
+                                        </View>
                                     </View>
                                 </TouchableOpacity>
                             )
                         }}
-                        ListEmptyComponent={ () => {
+                        ListEmptyComponent={() => {
                             return (
                                 <View>
-                                    <Text style={{fontSize:16, alignSelf: "center"}}>Searching... or try again.</Text>
+                                    <Text style={{ fontSize: 24, alignSelf: "center" }}>searching... or try again.</Text>
                                 </View>
                             )
                         }}
@@ -201,25 +219,52 @@ const styles = StyleSheet.create({
     scrollView: {
         position: "relative",
         top: 90,
-        marginVertical: 12,
+        marginVertical: 10,
         marginHorizontal: 50,
-        maxHeight: 435,
+        maxHeight: 505,
     },
-    listItem: {
+    listItemContainer: {
         flex: 1,
-        alignSelf: "stretch",
+        flexDirection: "row",
         padding: 10,
-        flexDirection: "column",
         backgroundColor: "white",
         marginVertical: 5,
-        height: 75,
+        height: 92,
+        width: 312,
         borderRadius: 5,
+        justifyContent: "space-between",
+    },
+    listItemImgContainer: {
+        width: 75,
+        height: 72,
+        overflow: "hidden",
+        marginLeft: 8,
+        position: "relative",
+        right: 0,
+    },
+    listItemImg: {
+        borderRadius: 0,
+        width: 80,
+        height: 80,
+        resizeMode: "stretch",
+        justifyContent: "flex-start",
+    },
+    listItem: {
+        flexDirection: "column",
+        padding: 5,
+        maxWidth: 215,
     },
     listItemName: {
-        fontSize: 16,
-        marginBottom: 5,
+        fontSize: 18,
+        marginBottom: 3,
     },
     listItemPhone: {
-        fontSize: 14,
+        fontSize: 16,
+        marginBottom: 3,
+        color: "gray"
     },
+    listItemDetails: {
+        fontSize: 16,
+        marginBottom: 2,
+    }
 });

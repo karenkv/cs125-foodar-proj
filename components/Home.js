@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, Pressable, Modal, TextInput } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, Pressable, Modal, TextInput, TouchableOpacity } from 'react-native';
 import Navigation from './Navigation';
 import CustomButton from './CustomButton';
 import AppleHealthKit from 'react-native-health';
@@ -191,6 +191,11 @@ export default class Home extends Component {
         this.setState({fat: this.state.fat + parseInt(this.state.fatInput)});
     }
 
+    onPressRecommendation = () => {
+        console.log(`pressed meal recommendation for ${this.state.recommendedMeal}`);
+        this.props.navigation.navigate('Search', {searchText: this.state.recommendedMeal});
+    }
+
     renderModal() {
         const modalVisible = this.state.modalVisible;
         return (
@@ -290,11 +295,15 @@ export default class Home extends Component {
                         <View style={styles.date}>
                             <Text style={{fontSize: 18}}>{this.getDate()}</Text>
                         </View>
-                        <View style={styles.recommend}>
-                            <Text style={{fontSize: 18, fontWeight: 'bold'}}>recommended meal</Text>
-                            <Text style={{fontSize: 18, paddingTop: 10, paddingBottom: 10}}>{this.state.recommendedMeal}</Text>
-                            <Text style={{fontSize: 14, fontStyle: 'italic'}}>~{this.state.recommendedCalories} calories</Text>
-                        </View>
+                        <TouchableOpacity
+                            style={styles.recommend}
+                            onPress={this.onPressRecommendation}>
+                            <View style={styles.recommend}>
+                                <Text style={{fontSize: 18, fontWeight: 'bold'}}>recommended meal</Text>
+                                <Text style={{fontSize: 18, paddingTop: 10, paddingBottom: 10}}>{this.state.recommendedMeal}</Text>
+                                <Text style={{fontSize: 14, fontStyle: 'italic'}}>~{this.state.recommendedCalories} calories</Text>
+                            </View>
+                        </TouchableOpacity>
                         <View style={styles.activity}>
                             <Text style={{fontSize: 18, fontStyle: 'italic'}}>
                                 activity this week: {this.state.activity}
