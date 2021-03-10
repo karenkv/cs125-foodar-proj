@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TextInput } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, TextInput, Button } from 'react-native';
 import Navigation from './Navigation';
 import CustomButton from './CustomButton';
 
@@ -74,6 +74,12 @@ export default class Profile extends Component {
                                 }
                             />
                         </View>
+                    </ScrollView>
+                    <ScrollView>
+                        <Button
+                            title="Preferences"
+                            onPress={() => this.props.navigation.navigate('UserPreferencesOnboarding')}
+                        />
                     </ScrollView>
                 </View>
                 <View style={styles.footer}>

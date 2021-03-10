@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "#D22624",
-    fontSize: 72,
+    fontSize: 53,
     paddingBottom: 100,
   },
   bottom: { 

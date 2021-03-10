@@ -4,12 +4,12 @@ import React, { Component } from 'react';
 import { Image, Button, View, Text, StyleSheet } from 'react-native';
 import CustomButton from './CustomButton';
 
+// React Native module for a Tinder-like swipe card deck
 import SwipeCards from "react-native-swipe-cards-deck";
 
 class Card extends React.Component {
   constructor(props) {
     super(props);
-    console.log(this.props);
   }
 
   render() {
@@ -20,11 +20,9 @@ class Card extends React.Component {
           source={{uri: this.props.uri}}
         />
         <Text style={styles.cardText}>{this.props.text}</Text>
-        <View style={{flex:1, flexDirection:"row", position:"absolute", bottom:5}}>
-          <Button title='💔' // TODO: fix dislike button onPress
-            onPress={() => {this.props.swiper._forceSwipeLeft()}}/>
-          <Button title='❤️' // TODO: fix like button onPress
-            onPress={() => {this.props.swiper._forceSwipeRight()}}/>
+        <View style={{flex:1, flexDirection:"row", position:"absolute", bottom:7, justifyContent:"space-between", minWidth: 130}}>
+          <Text style={{fontSize:24,}}>💔</Text> 
+          <Text style={{fontSize:24,}}>❤️</Text> 
         </View>
       </View>
     )
@@ -85,32 +83,37 @@ export default class UserPreferencesOnboarding extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-            <Text style={styles.title}>sign up</Text>
+            <Text style={styles.title}>preferences</Text>
             <Image source={require('../assets/divider.png')}/>
         </View>
         <SwipeCards
           cards={this.state.cards}
-          ref={(swiper) => this.swiper = swiper}
           loop={false}
-          renderCard={(cardData) => <Card swiper={this.swiper} {...cardData} />}
+          renderCard={(cardData) => <Card {...cardData} />}
           keyExtractor={(cardData) => String(cardData.text)}
           renderNoMoreCards={() => <NoMoreCards {...this.props} />}
           showYup={true}
           showNope={true}
           handleYup={this.handleYup}
           handleNope={this.handleNope}
-          yupText={"Like ❤️"}
-          nopeText={"Dislike 💔"}
+          yupText={"like ❤️"}
+          nopeText={"dislike 💔"}
           yupStyle={styles.yup}
           nopeStyle={styles.nope}
           yupTextStyle={styles.yupText}
           nopeTextStyle={styles.nopeText}
         />
         <Text style={styles.caption}>swipe right on foods you like and left on foods you dislike</Text>
-        <CustomButton 
-          title="back"
-          onPress={() => this.props.navigation.navigate('Signup')}
-        />
+        <View style={styles.buttonContainer}>
+          <CustomButton 
+            title="back"
+            onPress={() => this.props.navigation.navigate('Signup')}
+          />
+            <CustomButton 
+            title="skip"
+            onPress={() => this.props.navigation.navigate('Home')}
+          />
+        </View>
     </View>
     );
   }
@@ -123,6 +126,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     backgroundColor: "#FAF9F5",
     alignItems: "center",
+    alignContent: "center",
     justifyContent: "center",
   },
   header: {
@@ -135,7 +139,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "#D22624",
-    fontSize: 72,
+    fontSize: 53,
     paddingBottom: 100,
   },
   card: {
@@ -189,8 +193,16 @@ const styles = StyleSheet.create({
     color: "#D4947C",
     justifyContent: "center",
     position:"relative",
-    bottom: 30,
+    bottom: 40,
     marginHorizontal: 80,
     textAlign: "center"
   },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    minWidth: 280,
+    position: "relative",
+    bottom: 25,
+  }
 });
