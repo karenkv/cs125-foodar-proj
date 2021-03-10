@@ -1,19 +1,19 @@
 {
   "images" : [
     {
-      "filename" : "Sushi Roll App logo-2x.png",
+      "filename" : "Sushi Roll App logonotif-2x.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "20x20"
     },
     {
-      "filename" : "Sushi Roll App logo-2.png",
+      "filename" : "Sushi Roll App logo-3x.png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "20x20"
     },
     {
-      "filename" : "Sushi Roll App logo-4.png",
+      "filename" : "Sushi Roll App logo-2x.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "29x29"
@@ -25,25 +25,25 @@
       "size" : "29x29"
     },
     {
-      "filename" : "App logo 80x80.png",
+      "filename" : "Sushi Roll App logo2x.png",
       "idiom" : "iphone",
       "scale" : "2x",
-      "size" : "40x40"
-    },
-    {
-      "filename" : "Sushi Roll App logo-1.png",
-      "idiom" : "iphone",
-      "scale" : "3x",
       "size" : "40x40"
     },
     {
       "filename" : "Sushi Roll App logo.png",
       "idiom" : "iphone",
+      "scale" : "3x",
+      "size" : "40x40"
+    },
+    {
+      "filename" : "Sushi Roll App logo-1.png",
+      "idiom" : "iphone",
       "scale" : "2x",
       "size" : "60x60"
     },
     {
-      "filename" : "Sushi Roll App logo-3.png",
+      "filename" : "Sushi Roll App logo-app-3x.png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "60x60"
