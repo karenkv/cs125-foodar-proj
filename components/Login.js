@@ -3,40 +3,7 @@ import { View, Text, TextInput, Image, StyleSheet } from 'react-native';
 import CustomButton from './CustomButton';
 
 import auth from '@react-native-firebase/auth';
-import Toast from 'react-native-simple-toast';
-
-function LoginApp() {
-    // Set an initializing state whilst Firebase connects
-    const [initializing, setInitializing] = useState(true);
-    const [user, setUser] = useState();
-  
-    // Handle user state changes
-    function onAuthStateChanged(user) {
-      setUser(user);
-      if (initializing) setInitializing(false);
-    }
-  
-    useEffect(() => {
-      const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-      return subscriber; // unsubscribe on unmount
-    }, []);
-  
-    if (initializing) return null;
-  
-    if (!user) {
-      return (
-        <View>
-          <Text>Login</Text>
-        </View>
-      );
-    }
-  
-    return (
-      <View>
-        <Text>Welcome {user.email}</Text>
-      </View>
-    );
-  }
+import Toast from 'react-native-toast-message';
 
 export default class Login extends Component {
 
@@ -48,7 +15,7 @@ export default class Login extends Component {
         }
     }
 
-    login = () => {
+    login() {
         auth()
             .signInWithEmailAndPassword(this.state.username, this.state.password)
                 .then(() => {
@@ -56,7 +23,15 @@ export default class Login extends Component {
                     return true;
                 })
                 .catch(error => {
-                    Toast.show("Invalid User information. Please try again", Toast.LONG);
+                    if (error.code === 'auth/invalid-email') {
+                      console.log('That email address is invalid!');
+                    }
+                    Toast.show({
+                      type: "error",
+                      position: "bottom",
+                      text1: 'ERROR',
+                      text2: "Invalid User information. Please try again."
+                    });
                     return false;
                 });
     }
@@ -64,7 +39,6 @@ export default class Login extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <LoginApp />
                 <View style={styles.header}>
                     <Image source={require('../assets/logo.png')}/>
                 </View>
@@ -95,7 +69,7 @@ export default class Login extends Component {
                     <CustomButton 
                         title="login"
                         onPress={() => {
-                            if (this.login === true) {
+                            if (this.login() === true) {
                                 this.props.navigation.navigate('Home');
                             }
                         }}
