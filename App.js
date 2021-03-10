@@ -11,7 +11,28 @@ import UserPreferencesOnboarding from "./components/UserPreferencesOnboarding";
 import Search from "./components/Search";
 import Signup from "./components/Signup";
 
+import Toast, { BaseToast }  from 'react-native-toast-message';
+
 const Stack = createStackNavigator();
+
+const toastConfig = {
+  error: ({ text1, text2, ...rest }) => (
+    <BaseToast
+      style={{ height: 100, borderLeftColor: 'red' }}
+      contentContainerStyle={{ paddingHorizontal: 15 }}
+      text1Style={{
+        fontSize: 20,
+        fontWeight: '400'
+      }}
+      text2Style={{
+        fontSize: 15,
+        fontWeight: '400'
+      }}
+      text1={text1}
+      text2={text2}
+    />
+  )
+};
 
 export default class App extends Component {
   render() {
@@ -28,6 +49,7 @@ export default class App extends Component {
         <Stack.Screen name="Search" component={Search} />
         <Stack.Screen name="Profile" component={Profile} />
       </Stack.Navigator>
+      <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
     </NavigationContainer>;
   }
 }
