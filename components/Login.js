@@ -3,6 +3,7 @@ import { View, Text, TextInput, Image, StyleSheet } from 'react-native';
 import CustomButton from './CustomButton';
 
 import auth from '@react-native-firebase/auth';
+import Toast from 'react-native-simple-toast';
 
 function LoginApp() {
     // Set an initializing state whilst Firebase connects
@@ -51,18 +52,12 @@ export default class Login extends Component {
         auth()
             .signInWithEmailAndPassword(this.state.username, this.state.password)
                 .then(() => {
-                    console.log('User account created & signed in!');
+                    console.log('User account recognized and signed in!');
+                    return true;
                 })
                 .catch(error => {
-                    if (error.code === 'auth/email-already-in-use') {
-                    console.log('That email address is already in use!');
-                    }
-        
-                    if (error.code === 'auth/invalid-email') {
-                    console.log('That email address is invalid!');
-                    }
-        
-                    console.error(error);
+                    Toast.show("Invalid User information. Please try again", Toast.LONG);
+                    return false;
                 });
     }
 
@@ -100,9 +95,9 @@ export default class Login extends Component {
                     <CustomButton 
                         title="login"
                         onPress={() => {
-                            this.login;
-                            this.props.navigation.navigate('Home');
-                            console.log("User logged in!");
+                            if (this.login === true) {
+                                this.props.navigation.navigate('Home');
+                            }
                         }}
                         accessibilityLabel="Click to submit login information"
                     />

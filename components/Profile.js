@@ -61,28 +61,6 @@ export default class Profile extends Component {
                                 placeholder="zipcode"
                                 placeholderTextColor={this.placeholderTextColor}
                             />
-                            <TextInput 
-                                style={styles.textInput} 
-                                keyboardType="numeric"
-                                placeholder="weight"
-                                placeholderTextColor={this.placeholderTextColor}
-                            />
-                            <TextInput 
-                                style={styles.textInput} 
-                                keyboardType="numeric"
-                                placeholder="height"
-                                placeholderTextColor={this.placeholderTextColor}
-                            />
-                            <TextInput 
-                                style={styles.textInput} 
-                                placeholder="food preference"
-                                placeholderTextColor={this.placeholderTextColor}
-                            />
-                            <TextInput 
-                                style={styles.textInput} 
-                                placeholder="average activity level"
-                                placeholderTextColor={this.placeholderTextColor}
-                            />
                             <CustomButton 
                                 title="save"
                                 style={{alignSelf: "center", marginVertical: 12}}
