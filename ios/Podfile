@@ -10,6 +10,8 @@ target 'foodar' do
 
   pod 'react-native-geolocation', :path => '../node_modules/@react-native-community/geolocation'
 
+  pod 'RNAppleHealthKit', :path => '../node_modules/react-native-health'
+
   target 'foodarTests' do
     inherit! :complete
     # Pods for testing

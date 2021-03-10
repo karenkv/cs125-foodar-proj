@@ -1,30 +1,27 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, Pressable, Modal, TextInput, TouchableOpacity } from 'react-native';
 import Navigation from './Navigation';
-import Config from 'react-native-config';
 import CustomButton from './CustomButton';
+import AppleHealthKit from 'react-native-health';
 
-const GOOGLE_CLIENT_ID = Config.GOOGLE_CLIENT_ID;
-const scopes = ['https://www.googleapis.com/auth/fitness.activity.read',
-    'https://www.googleapis.com/auth/fitness.activity.write',
-    'https://www.googleapis.com/auth/fitness.body.read',
-    'https://www.googleapis.com/auth/fitness.body.write',
-    'https://www.googleapis.com/auth/fitness.location.read',
-    'https://www.googleapis.com/auth/fitness.location.write',
-    'https://www.googleapis.com/auth/fitness.nutrition.read',
-    'https://www.googleapis.com/auth/fitness.nutrition.write'];
-const oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
 
 const DAYS = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
 const MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", 
     "september", "october", "november", "december"];
+
+const options = {
+    permissions: {
+        read: ["Height", "Weight", "StepCount", "BiologicalSex", "DateOfBirth"],
+        write: ["Height", "Weight", "StepCount", "BiologicalSex", "DateOfBirth"]
+    }
+};
 
 export default class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
             modalVisible: false,
-            calories: 2000,
+            calories: 0,
             carbs: 0,
             protein: 0,
             fat: 0,
@@ -33,8 +30,147 @@ export default class Home extends Component {
             proteinInput: 0,
             fatInput: 0,
             recommendedMeal: 'burger',
-            recommendedCalories: 500
+            recommendedCalories: 500,
+            height: 0,
+            weight: 0,
+            steps: 0,
+            activity: '',
+            sex: '',
+            age: 0,
+            bmr: 0
         };
+    }
+
+    async componentDidMount() {
+        AppleHealthKit.initHealthKit(options, (err, results) => {
+            if (err) {
+                console.log("error initializing Healthkit: ", err);
+                return;
+            }
+            this.fetchData();
+        });
+    }
+
+    fetchData = async () => {
+        await this.getSex();
+        await this.getAge();
+        await this.getHeight();
+        await this.getWeight();
+        for(i = 1; i < 8; i++) {
+            await this.getSteps(i);
+        }
+        await this.getActivity();
+        await this.getBMR();
+        await this.getCalories();
+    }
+
+    getSteps = (i) => {
+        return new Promise(resolve => {
+            let d = new Date();
+            const dateOpt = {date: new Date(d.setDate(d.getDate() - i)).toISOString()};
+            AppleHealthKit.getStepCount(dateOpt, (err, results) => {
+                if (err) {
+                    console.log("error getting steps: ", err);
+                    return;
+                }
+                this.setState({steps: this.state.steps += results.value}, () => { resolve() });
+            });
+        });
+    }
+
+    getAge = () => {
+        return new Promise(resolve => {
+            AppleHealthKit.getDateOfBirth(null, (err, results) => {
+                if (err) {
+                    console.log("error getting latest age: ", err);
+                    return;
+                }
+                this.setState({age: results.age}, () => { resolve() });
+            });
+        });
+    }
+
+    getSex = () => {
+        return new Promise(resolve => {
+            AppleHealthKit.getBiologicalSex(null, (err, results) => {
+                if (err) {
+                    console.log("error getting latest age: ", err);
+                    return;
+                }
+                this.setState({sex: results.value}, () => { resolve() });
+            });
+        });
+    }
+
+    getHeight = () => {
+        return new Promise(resolve => {
+            AppleHealthKit.getLatestHeight(null, (err, results) => {
+                if (err) {
+                    console.log("error getting latest height: ", err);
+                    return;
+                }
+                this.setState({height: results.value}, () => { resolve() });
+            });
+        });
+    }
+
+    getWeight = () => {
+        return new Promise(resolve => {
+            AppleHealthKit.getLatestWeight(null, (err, results) => {
+                if (err) {
+                    console.log("error getting latest weight: ", err);
+                    return;
+                }
+                this.setState({weight: results.value}, () => { resolve() });
+            });
+        });
+    }
+
+    getActivity = () => {
+        const steps = this.state.steps / 6;
+        return new Promise(resolve => {
+            if(steps < 1500) {
+                this.setState({activity: 'very low'}, () => { resolve() });
+            } else if(steps >= 1500 && steps < 3000) {
+                this.setState({activity: 'low'}, () => { resolve() });
+            } else if(steps >= 3000 && steps < 6000) {
+                this.setState({activity: 'moderate'}, () => { resolve() });
+            } else if(steps >= 6000 && steps < 7500) {
+                this.setState({activity: 'high'}, () => { resolve() });
+            } else {
+                this.setState({activity: 'very high'}, () => { resolve() });
+            }
+        });
+    }
+
+    getBMR = () => {  
+        return new Promise(resolve => {
+            if(this.state.sex === 'female') {
+            this.setState({bmr: 
+                    66 + (6.3 * this.state.weight) + (12.9 * this.state.height) - (6.8 * this.state.age)},
+                    () => { resolve() });
+            } else {
+                this.setState({bmr: 
+                    65 + (4.3 * this.state.weight) + (4.7 * this.state.height) - (4.7 * this.state.age)},
+                    () => { resolve() });
+            }
+        });
+    }
+
+    getCalories = () => {
+        return new Promise(resolve => {
+            if(this.state.activity === 'very low') {
+                this.setState({calories: this.state.bmr * 1.2}, () => { resolve() });
+            } else if(this.state.activity === 'low') {
+                this.setState({calories: this.state.bmr * 1.375}, () => { resolve() });
+            } else if(this.state.activity === 'moderate') {
+                this.setState({calories: this.state.bmr * 1.55}, () => { resolve() });
+            } else if(this.state.activity === 'high') {
+                this.setState({calories: this.state.bmr * 1.725}, () => { resolve() });
+            } else {
+                this.setState({calories: this.state.bmr * 1.9}, () => { resolve() });
+            }
+        });
     }
 
     setModalVisible = (visible) => {
@@ -148,7 +284,7 @@ export default class Home extends Component {
                     <ScrollView>
                         <View style={styles.caloriesRemaining}>
                             <Text style={{color: "#FAF9F5", fontSize: 24, textAlign: "center"}}>
-                                {this.state.calories}{`\ncalories\nleft`}
+                                {Number.parseFloat(this.state.calories).toFixed(2)}{`\ncalories\nleft`}
                                 </Text>
                         </View>
                         <View style={styles.nutrition}>
@@ -168,6 +304,11 @@ export default class Home extends Component {
                                 <Text style={{fontSize: 14, fontStyle: 'italic'}}>~{this.state.recommendedCalories} calories</Text>
                             </View>
                         </TouchableOpacity>
+                        <View style={styles.activity}>
+                            <Text style={{fontSize: 18, fontStyle: 'italic'}}>
+                                activity this week: {this.state.activity}
+                            </Text>
+                        </View>
                     </ScrollView>
                     <Modal
                         animationType="fade"
@@ -306,5 +447,10 @@ const styles = StyleSheet.create({
         marginTop: 15,
         borderRadius: 10,
         padding: 15
+    },
+    activity: {
+        alignItems:'center', 
+        justifyContent:'center',
+        marginTop: 25
     }
 });
