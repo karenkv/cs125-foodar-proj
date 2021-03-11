@@ -1,7 +1,8 @@
 'use strict';
 
 import React, { Component } from 'react';
-import { Image, Button, View, Text, StyleSheet } from 'react-native';
+import { Image, View, Text, StyleSheet } from 'react-native';
+import firestore from '@react-native-firebase/firestore';
 import CustomButton from './CustomButton';
 
 // React Native module for a Tinder-like swipe card deck
