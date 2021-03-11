@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Image, StyleSheet, View, Text, TextInput, SafeAreaView, Button } from 'react-native';
+import { Image, StyleSheet, View, Text, TextInput, SafeAreaView, } from 'react-native';
 import CustomButton from './CustomButton';
 
 import auth from '@react-native-firebase/auth';
@@ -87,10 +87,12 @@ export default class Signup extends Component {
               title="next"
               accessibilityLabel="Click to continue user signup with preferences"
               onPress={() => {
-                if (this.createUser() === true) {
+                this.createUser();
+                if (auth().currentUser != null) {
                   this.props.navigation.navigate('UserPreferencesOnboarding');
                 }
-              }}/>
+              }}
+            />
           </View>
         </SafeAreaView>
       )
