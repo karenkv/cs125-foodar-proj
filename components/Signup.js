@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Image, StyleSheet, View, Text, TextInput, SafeAreaView, Button } from 'react-native';
+import { Image, StyleSheet, View, Text, TextInput, SafeAreaView, } from 'react-native';
 import CustomButton from './CustomButton';
 
 import auth from '@react-native-firebase/auth';
@@ -16,27 +16,32 @@ export default class Signup extends Component {
       }
     }
 
+    showError(msg){
+      Toast.show({
+        type: "error",
+        position: "bottom",
+        text1: 'ERROR',
+        text2: msg
+      });
+    }
+
     createUser() {
       auth()
         .createUserWithEmailAndPassword(this.state.username, this.state.password)
           .then(() => {
               console.log('User account created & signed in!');
-              return true;
           })
           .catch(error => {
               if (error.code === 'auth/email-already-in-use') {
                 console.log('That email address is already in use!');
-              }
-              if (error.code === 'auth/invalid-email') {
+                this.showError("Invalid User information. Please try again.");
+              } else if (error.code === 'auth/invalid-email') {
                 console.log('That email address is invalid!');
+                this.showError("Invalid User information. Please try again.");
+              } else if (error.code === 'auth/weak-password') {
+                console.log(error);
+                this.showError("Please choose a stronger password.");
               }
-              Toast.show({
-                type: "error",
-                position: "bottom",
-                text1: 'ERROR',
-                text2: "Invalid User information. Please try again."
-              });
-              return false;
           });
     }
 
@@ -82,10 +87,12 @@ export default class Signup extends Component {
               title="next"
               accessibilityLabel="Click to continue user signup with preferences"
               onPress={() => {
-                if (this.createUser() === true) {
+                this.createUser();
+                if (auth().currentUser != null) {
                   this.props.navigation.navigate('UserPreferencesOnboarding');
                 }
-              }}/>
+              }}
+            />
           </View>
         </SafeAreaView>
       )

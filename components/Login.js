@@ -20,7 +20,6 @@ export default class Login extends Component {
             .signInWithEmailAndPassword(this.state.username, this.state.password)
                 .then(() => {
                     console.log('User account recognized and signed in!');
-                    return true;
                 })
                 .catch(error => {
                     if (error.code === 'auth/invalid-email') {
@@ -32,7 +31,6 @@ export default class Login extends Component {
                       text1: 'ERROR',
                       text2: "Invalid User information. Please try again."
                     });
-                    return false;
                 });
     }
 
@@ -56,7 +54,7 @@ export default class Login extends Component {
                     <TextInput 
                         style={styles.textInput} 
                         placeholder="password"
-                        onChangeText={(text) => this.setState({username:text})}
+                        onChangeText={(text) => this.setState({password:text})}
                         placeholderTextColor={this.placeholderTextColor}
                     />                    
                 </View>
@@ -69,7 +67,8 @@ export default class Login extends Component {
                     <CustomButton 
                         title="login"
                         onPress={() => {
-                            if (this.login() === true) {
+                            this.login();
+                            if (auth().currentUser != null) {
                                 this.props.navigation.navigate('Home');
                             }
                         }}
