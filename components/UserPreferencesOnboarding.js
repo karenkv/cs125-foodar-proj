@@ -107,10 +107,6 @@ export default class UserPreferencesOnboarding extends Component {
         <Text style={styles.caption}>swipe right on foods you like and left on foods you dislike</Text>
         <View style={styles.buttonContainer}>
           <CustomButton 
-            title="back"
-            onPress={() => this.props.navigation.navigate('Signup')}
-          />
-            <CustomButton 
             title="skip"
             onPress={() => this.props.navigation.navigate('Home')}
           />
@@ -200,7 +196,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-evenly",
     alignItems: "center",
     minWidth: 280,
     position: "relative",
