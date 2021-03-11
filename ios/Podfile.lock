@@ -390,7 +390,7 @@ PODS:
     - Firebase/Auth (= 7.7.0)
     - React-Core
     - RNFBApp
-  - RNGestureHandler (1.10.0):
+  - RNGestureHandler (1.10.1):
     - React-Core
   - RNReanimated (1.13.2):
     - React-Core
@@ -625,10 +625,10 @@ SPEC CHECKSUMS:
   React-RCTVibration: ae4f914cfe8de7d4de95ae1ea6cc8f6315d73d9d
   ReactCommon: 73d79c7039f473b76db6ff7c6b159c478acbbb3b
   RNAppleHealthKit: 07d47f1f25caa2b922c0184357b4dd75c1975acf
-  RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f
+  RNCMaskedView: f5c7d14d6847b7b44853f7acb6284c1da30a3459
   RNFBApp: 1624ffcfc328c00ec3049d2f1bbf09d3e78dcdb7
   RNFBAuth: 888e490f4bc371e6afa68d587c7c791976a5f52f
-  RNGestureHandler: 03f587ba19a7e2d9fe48fb9aa6e33ace5fd07dd5
+  RNGestureHandler: 5e58135436aacc1c5d29b75547d3d2b9430d052c
   RNReanimated: e03f7425cb7a38dcf1b644d680d1bfc91c3337ad
   RNScreens: b6c9607e6fe47c1b6e2f1910d2acd46dd7ecea3a
   RNSVG: ce9d996113475209013317e48b05c21ee988d42e
@@ -636,6 +636,6 @@ SPEC CHECKSUMS:
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 4b03321bdab7e947008771a716dc55910ecd8b18
+PODFILE CHECKSUM: 26e8f0eeadbba55262a39e5c1365614ffc4e7848
 
 COCOAPODS: 1.10.1
