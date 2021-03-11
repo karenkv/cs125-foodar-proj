@@ -56,7 +56,7 @@ export default class Login extends Component {
                     <TextInput 
                         style={styles.textInput} 
                         placeholder="password"
-                        onChangeText={(text) => this.setState({username:text})}
+                        onChangeText={(text) => this.setState({password:text})}
                         placeholderTextColor={this.placeholderTextColor}
                     />                    
                 </View>
