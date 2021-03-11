@@ -42,7 +42,10 @@ class NoMoreCards extends Component {
         <Text style={styles.NoMoreCards}>thanks for letting us know!</Text>
         <CustomButton
           title="done"
-          onPress={() => this.props.navigation.navigate('Home')}
+          onPress={() => {
+            this.props.navigation.navigate('Home');
+            this.props.addUserPreferences();
+          }}
           style={{ 
             backgroundColor: "#FAF9F5", 
             maxWidth: 75, 
@@ -78,7 +81,8 @@ export default class UserPreferencesOnboarding extends Component {
     };
 
     this.handleNope = this.handleNope.bind(this);
-    this.handleYup = this.handleYup.bind(this)
+    this.handleYup = this.handleYup.bind(this);
+    this.addUserPreferences = this.addUserPreferences.bind(this);
   }
 
   async addUserPreferences() {
@@ -114,7 +118,7 @@ export default class UserPreferencesOnboarding extends Component {
           loop={false}
           renderCard={(cardData) => <Card {...cardData} />}
           keyExtractor={(cardData) => String(cardData.text)}
-          renderNoMoreCards={() => <NoMoreCards {...this.props} />}
+          renderNoMoreCards={() => <NoMoreCards addUserPreferences={this.addUserPreferences} {...this.props} />}
           showYup={true}
           showNope={true}
           handleYup={this.handleYup}
