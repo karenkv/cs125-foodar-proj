@@ -1,41 +1,10 @@
 import React, { Component } from 'react';
-import { Image, StyleSheet, View, Text, TextInput, SafeAreaView, Button } from 'react-native';
+import { Image, StyleSheet, View, Text, TextInput, SafeAreaView, } from 'react-native';
 import CustomButton from './CustomButton';
 
 import auth from '@react-native-firebase/auth';
+import Toast from 'react-native-toast-message';
 
-function LoginApp() {
-  // Set an initializing state whilst Firebase connects
-  const [initializing, setInitializing] = useState(true);
-  const [user, setUser] = useState();
-
-  // Handle user state changes
-  function onAuthStateChanged(user) {
-    setUser(user);
-    if (initializing) setInitializing(false);
-  }
-
-  useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber; // unsubscribe on unmount
-  }, []);
-
-  if (initializing) return null;
-
-  if (!user) {
-    return (
-      <View>
-        <Text>Login</Text>
-      </View>
-    );
-  }
-
-  return (
-    <View>
-      <Text>Welcome {user.email}</Text>
-    </View>
-  );
-}
 
 export default class Signup extends Component {
     constructor(props) {
@@ -47,8 +16,16 @@ export default class Signup extends Component {
       }
     }
 
+    showError(msg){
+      Toast.show({
+        type: "error",
+        position: "bottom",
+        text1: 'ERROR',
+        text2: msg
+      });
+    }
+
     createUser() {
-      console.log("Asdfsadfasdfasfas");
       auth()
         .createUserWithEmailAndPassword(this.state.username, this.state.password)
           .then(() => {
@@ -56,14 +33,15 @@ export default class Signup extends Component {
           })
           .catch(error => {
               if (error.code === 'auth/email-already-in-use') {
-              console.log('That email address is already in use!');
+                console.log('That email address is already in use!');
+                this.showError("Invalid User information. Please try again.");
+              } else if (error.code === 'auth/invalid-email') {
+                console.log('That email address is invalid!');
+                this.showError("Invalid User information. Please try again.");
+              } else if (error.code === 'auth/weak-password') {
+                console.log(error);
+                this.showError("Please choose a stronger password.");
               }
-
-              if (error.code === 'auth/invalid-email') {
-              console.log('That email address is invalid!');
-              }
-
-              console.error(error);
           });
     }
 
@@ -83,6 +61,11 @@ export default class Signup extends Component {
           <View style={styles.textInputContainer}>
             <TextInput 
               style={styles.textInput} 
+              placeholder="full name"
+              placeholderTextColor={this.placeholderTextColor}
+            />
+            <TextInput 
+              style={styles.textInput} 
               placeholder="email"
               onChangeText={(text)=>this.handleChange(text, 'username')}
               placeholderTextColor={this.placeholderTextColor}
@@ -91,34 +74,6 @@ export default class Signup extends Component {
               style={styles.textInput} 
               placeholder="password"
               onChangeText={(text)=>this.handleChange(text, 'password')}
-              placeholderTextColor={this.placeholderTextColor}
-            />
-            <TextInput 
-              style={styles.textInput} 
-              keyboardType="numbers-and-punctuation"
-              placeholder="birthdate"
-              placeholderTextColor={this.placeholderTextColor}
-            />
-            <TextInput 
-              style={styles.textInput} 
-              keyboardType="numeric"
-              placeholder="weight"
-              placeholderTextColor={this.placeholderTextColor}
-            />
-            <TextInput 
-              style={styles.textInput} 
-              keyboardType="numeric"
-              placeholder="height"
-              placeholderTextColor={this.placeholderTextColor}
-            />
-            <TextInput 
-              style={styles.textInput} 
-              placeholder="food preference"
-              placeholderTextColor={this.placeholderTextColor}
-            />
-            <TextInput 
-              style={styles.textInput} 
-              placeholder="average activity level"
               placeholderTextColor={this.placeholderTextColor}
             />
           </View>
@@ -133,8 +88,11 @@ export default class Signup extends Component {
               accessibilityLabel="Click to continue user signup with preferences"
               onPress={() => {
                 this.createUser();
-                this.props.navigation.navigate('UserPreferencesOnboarding');
-              }}/>
+                if (auth().currentUser != null) {
+                  this.props.navigation.navigate('UserPreferencesOnboarding');
+                }
+              }}
+            />
           </View>
         </SafeAreaView>
       )

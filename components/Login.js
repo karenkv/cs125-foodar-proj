@@ -3,39 +3,7 @@ import { View, Text, TextInput, Image, StyleSheet } from 'react-native';
 import CustomButton from './CustomButton';
 
 import auth from '@react-native-firebase/auth';
-
-function LoginApp() {
-    // Set an initializing state whilst Firebase connects
-    const [initializing, setInitializing] = useState(true);
-    const [user, setUser] = useState();
-  
-    // Handle user state changes
-    function onAuthStateChanged(user) {
-      setUser(user);
-      if (initializing) setInitializing(false);
-    }
-  
-    useEffect(() => {
-      const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-      return subscriber; // unsubscribe on unmount
-    }, []);
-  
-    if (initializing) return null;
-  
-    if (!user) {
-      return (
-        <View>
-          <Text>Login</Text>
-        </View>
-      );
-    }
-  
-    return (
-      <View>
-        <Text>Welcome {user.email}</Text>
-      </View>
-    );
-  }
+import Toast from 'react-native-toast-message';
 
 export default class Login extends Component {
 
@@ -47,29 +15,28 @@ export default class Login extends Component {
         }
     }
 
-    login = () => {
+    login() {
         auth()
             .signInWithEmailAndPassword(this.state.username, this.state.password)
                 .then(() => {
-                    console.log('User account created & signed in!');
+                    console.log('User account recognized and signed in!');
                 })
                 .catch(error => {
-                    if (error.code === 'auth/email-already-in-use') {
-                    console.log('That email address is already in use!');
-                    }
-        
                     if (error.code === 'auth/invalid-email') {
-                    console.log('That email address is invalid!');
+                      console.log('That email address is invalid!');
                     }
-        
-                    console.error(error);
+                    Toast.show({
+                      type: "error",
+                      position: "bottom",
+                      text1: 'ERROR',
+                      text2: "Invalid User information. Please try again."
+                    });
                 });
     }
 
     render() {
         return (
             <View style={styles.container}>
-                <LoginApp />
                 <View style={styles.header}>
                     <Image source={require('../assets/logo.png')}/>
                 </View>
@@ -87,7 +54,7 @@ export default class Login extends Component {
                     <TextInput 
                         style={styles.textInput} 
                         placeholder="password"
-                        onChangeText={(text) => this.setState({username:text})}
+                        onChangeText={(text) => this.setState({password:text})}
                         placeholderTextColor={this.placeholderTextColor}
                     />                    
                 </View>
@@ -100,9 +67,10 @@ export default class Login extends Component {
                     <CustomButton 
                         title="login"
                         onPress={() => {
-                            this.login;
-                            this.props.navigation.navigate('Home');
-                            console.log("User logged in!");
+                            this.login();
+                            if (auth().currentUser != null) {
+                                this.props.navigation.navigate('Home');
+                            }
                         }}
                         accessibilityLabel="Click to submit login information"
                     />

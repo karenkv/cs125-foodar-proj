@@ -1,7 +1,9 @@
 'use strict';
 
 import React, { Component } from 'react';
-import { Image, Button, View, Text, StyleSheet } from 'react-native';
+import { Image, View, Text, StyleSheet, RefreshControlBase } from 'react-native';
+import firestore from '@react-native-firebase/firestore';
+import auth from "@react-native-firebase/auth";
 import CustomButton from './CustomButton';
 
 // React Native module for a Tinder-like swipe card deck
@@ -40,7 +42,10 @@ class NoMoreCards extends Component {
         <Text style={styles.NoMoreCards}>thanks for letting us know!</Text>
         <CustomButton
           title="done"
-          onPress={() => this.props.navigation.navigate('Home')}
+          onPress={() => {
+            this.props.navigation.navigate('Home');
+            this.props.addUserPreferences();
+          }}
           style={{ 
             backgroundColor: "#FAF9F5", 
             maxWidth: 75, 
@@ -64,18 +69,40 @@ export default class UserPreferencesOnboarding extends Component {
       { text: "vegetarian", uri: "https://cdn.pixabay.com/photo/2016/10/31/18/23/salad-1786327__340.jpg" },
       { text: "vegan", uri: "https://live.staticflickr.com/7837/47227303852_b36d09aeb8_b.jpg" },
     ];
+
+    var prefInputsInit = new Object;
+    for (let item in foodPrefOptions) {
+      prefInputsInit[foodPrefOptions[item].text] = true;
+    }
+
     this.state = {
-      cards: foodPrefOptions
+      cards: foodPrefOptions,
+      prefInputs: prefInputsInit,
     };
+
+    this.handleNope = this.handleNope.bind(this);
+    this.handleYup = this.handleYup.bind(this);
+    this.addUserPreferences = this.addUserPreferences.bind(this);
+  }
+
+  async addUserPreferences() {
+    const ref = firestore().collection('user-pref');
+    const uid = auth().currentUser.uid;
+    console.log(this.state.prefInputs);
+    await ref.doc(uid).set(this.state.prefInputs);
   }
 
   handleYup (card) {
-    console.log(`like for ${card.text}`)
+    console.log(`like for ${card.text}`);
     return true;
   }
 
   handleNope (card) {
-    console.log(`dislike for ${card.text}`)
+    console.log(`dislike for ${card.text}`);
+    const newPrefInputs = { ...this.state.prefInputs, [card.text]: false};
+    this.setState({
+      prefInputs: newPrefInputs
+    });
     return true;
   }
   
@@ -91,7 +118,7 @@ export default class UserPreferencesOnboarding extends Component {
           loop={false}
           renderCard={(cardData) => <Card {...cardData} />}
           keyExtractor={(cardData) => String(cardData.text)}
-          renderNoMoreCards={() => <NoMoreCards {...this.props} />}
+          renderNoMoreCards={() => <NoMoreCards addUserPreferences={this.addUserPreferences} {...this.props} />}
           showYup={true}
           showNope={true}
           handleYup={this.handleYup}
@@ -106,12 +133,11 @@ export default class UserPreferencesOnboarding extends Component {
         <Text style={styles.caption}>swipe right on foods you like and left on foods you dislike</Text>
         <View style={styles.buttonContainer}>
           <CustomButton 
-            title="back"
-            onPress={() => this.props.navigation.navigate('Signup')}
-          />
-            <CustomButton 
             title="skip"
-            onPress={() => this.props.navigation.navigate('Home')}
+            onPress={() => {
+              this.props.navigation.navigate('Home');
+              this.addUserPreferences();
+            }}
           />
         </View>
     </View>
@@ -199,7 +225,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-evenly",
     alignItems: "center",
     minWidth: 280,
     position: "relative",
