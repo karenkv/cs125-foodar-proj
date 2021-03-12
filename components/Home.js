@@ -1,8 +1,14 @@
+'use strict';
+
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, Pressable, Modal, TextInput, TouchableOpacity } from 'react-native';
 import Navigation from './Navigation';
 import CustomButton from './CustomButton';
 import AppleHealthKit from 'react-native-health';
+import SwipeCards from "react-native-swipe-cards-deck";
+import firestore from '@react-native-firebase/firestore';
+import auth from "@react-native-firebase/auth";
+import data from '../data/data.json';
 
 
 const DAYS = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
@@ -15,6 +21,22 @@ const options = {
         write: ["Height", "Weight", "StepCount", "BiologicalSex", "DateOfBirth"]
     }
 };
+
+class Card extends React.Component {
+    constructor(props) {
+      super(props);
+    }
+  
+    render() {
+      return (
+        <View style={styles.card}>
+            <Text style={{fontSize: 18, fontWeight: 'bold'}}>recommended meal</Text>
+            <Text numberOfLines={1} style={{fontSize: 18, paddingTop: 10, paddingBottom: 10,}}>{this.props.meal}</Text>
+            <Text style={{fontSize: 14, fontStyle: 'italic'}}>~{this.props.calories} calories</Text>       
+        </View>
+      );
+    }
+}
 
 export default class Home extends Component {
     constructor(props) {
@@ -29,16 +51,22 @@ export default class Home extends Component {
             carbsInput: 0,
             proteinInput: 0,
             fatInput: 0,
-            recommendedMeal: 'burger',
-            recommendedCalories: 500,
+            recommendedMeal: '',
+            recommendedCalories: 0,
             height: 0,
             weight: 0,
             steps: 0,
             activity: '',
             sex: '',
             age: 0,
-            bmr: 0
+            bmr: 0,
+            prefs: {},
+            recommendations: [],
+            cardPlace: 0
         };
+
+        this.handleNope = this.handleNope.bind(this);
+        this.handleYup = this.handleYup.bind(this);
     }
 
     async componentDidMount() {
@@ -56,15 +84,18 @@ export default class Home extends Component {
         await this.getAge();
         await this.getHeight();
         await this.getWeight();
+        let i;
         for(i = 1; i < 8; i++) {
             await this.getSteps(i);
         }
         await this.getActivity();
         await this.getBMR();
         await this.getCalories();
+        await this.getPrefs();
+        await this.getRecommendations();
     }
 
-    getSteps = (i) => {
+    getSteps = async (i) => {
         return new Promise(resolve => {
             let d = new Date();
             const dateOpt = {date: new Date(d.setDate(d.getDate() - i)).toISOString()};
@@ -73,61 +104,67 @@ export default class Home extends Component {
                     console.log("error getting steps: ", err);
                     return;
                 }
+                console.log("steps for ", i, ": ", results.value);
                 this.setState({steps: this.state.steps += results.value}, () => { resolve() });
             });
         });
     }
 
-    getAge = () => {
+    getAge = async () => {
         return new Promise(resolve => {
             AppleHealthKit.getDateOfBirth(null, (err, results) => {
                 if (err) {
                     console.log("error getting latest age: ", err);
                     return;
                 }
+                console.log("age: ", results.age);
                 this.setState({age: results.age}, () => { resolve() });
             });
         });
     }
 
-    getSex = () => {
+    getSex = async () => {
         return new Promise(resolve => {
             AppleHealthKit.getBiologicalSex(null, (err, results) => {
                 if (err) {
                     console.log("error getting latest age: ", err);
                     return;
                 }
+                console.log("sex: ", results.value);
                 this.setState({sex: results.value}, () => { resolve() });
             });
         });
     }
 
-    getHeight = () => {
+    getHeight = async () => {
         return new Promise(resolve => {
             AppleHealthKit.getLatestHeight(null, (err, results) => {
                 if (err) {
                     console.log("error getting latest height: ", err);
                     return;
                 }
+                console.log("height: ", results.value);
                 this.setState({height: results.value}, () => { resolve() });
             });
         });
     }
 
-    getWeight = () => {
+    getWeight = async () => {
         return new Promise(resolve => {
             AppleHealthKit.getLatestWeight(null, (err, results) => {
                 if (err) {
                     console.log("error getting latest weight: ", err);
                     return;
                 }
+                console.log("weight: ", results.value);
                 this.setState({weight: results.value}, () => { resolve() });
             });
         });
     }
 
-    getActivity = () => {
+    getActivity = async () => {
         const steps = this.state.steps / 6;
+        console.log("Activity set");
         return new Promise(resolve => {
             if(steps < 1500) {
                 this.setState({activity: 'very low'}, () => { resolve() });
@@ -143,10 +180,11 @@ export default class Home extends Component {
         });
     }
 
-    getBMR = () => {  
+    getBMR = async () => {  
         return new Promise(resolve => {
+            console.log("BMR set");
             if(this.state.sex === 'female') {
-            this.setState({bmr: 
+                this.setState({bmr: 
                     66 + (6.3 * this.state.weight) + (12.9 * this.state.height) - (6.8 * this.state.age)},
                     () => { resolve() });
             } else {
@@ -157,8 +195,9 @@ export default class Home extends Component {
         });
     }
 
-    getCalories = () => {
+    getCalories = async () => {
         return new Promise(resolve => {
+            console.log("Calories set");
             if(this.state.activity === 'very low') {
                 this.setState({calories: this.state.bmr * 1.2}, () => { resolve() });
             } else if(this.state.activity === 'low') {
@@ -170,6 +209,61 @@ export default class Home extends Component {
             } else {
                 this.setState({calories: this.state.bmr * 1.9}, () => { resolve() });
             }
+        });
+    }
+    
+    getPrefs = async () => {
+        return new Promise(resolve => {
+                firestore().collection('user-pref').doc(auth().currentUser.uid).get()
+                .then(documentSnapshot => {
+                    console.log("prefs: ", documentSnapshot.data());
+                    this.setState({prefs: documentSnapshot.data()}, () => { resolve() });
+                });
+            })
+        }
+
+    getRecommendations = async () => {
+        return new Promise(resolve => {
+            let total = this.state.fat + this.state.protein + this.state.carbs;
+            let fat_p = total > 0 ? (.3 - (this.state.fat / total)) * 100 : 0;
+            let protein_p = total > 0 ? (.2 - (this.state.protein / total)) * 100 : 0;
+            let carbs_p = total > 0 ? (.5 - (this.state.carbs / total)) * 100 : 0;
+            console.log("getting recs");
+
+            let food_recs = [];
+            let i;
+            for(i = 0; i < data.length; i++) {
+                let obj = data[i];
+                let score = 0.0;
+                let key;
+                for(key in obj) {
+                    if(key === "calories") {
+                        if(obj[key] > this.state.calories){
+                            score -= 10.0;
+                        }
+                    } else if(key === "fat") {
+                        score += obj[key] * fat_p;
+                    } else if(key === "protein") {
+                        score += obj[key] * protein_p;
+                    } else if(key === "carbs") {
+                        score += obj[key] * carbs_p;
+                    } else if(obj[key] == this.state.prefs[key]) {
+                        score += 10.0
+                    }
+                }
+                food_recs.push({"meal": obj["name"], "calories": obj["calories"], "score": score})
+            }
+
+            food_recs.sort(function(obj1, obj2) {
+                return obj2.score - obj1.score;
+            });
+
+            console.log("recommendations: ", food_recs.slice(0, 10));
+            this.setState({
+                recommendations: food_recs.slice(0, 10),
+                recommendedMeal: food_recs[0].meal,
+                recommendedCalories: food_recs[0].calories
+            }, () => { resolve() });
         });
     }
 
@@ -185,15 +279,30 @@ export default class Home extends Component {
     }
 
     saveMeal() {
-        this.setState({calories: this.state.calories - parseInt(this.state.caloriesInput)});
-        this.setState({carbs: this.state.carbs + parseInt(this.state.carbsInput)});
-        this.setState({protein: this.state.protein + parseInt(this.state.proteinInput)});
-        this.setState({fat: this.state.fat + parseInt(this.state.fatInput)});
+        this.setState({
+            calories: this.state.calories - parseInt(this.state.caloriesInput),
+            carbs: this.state.carbs + parseInt(this.state.carbsInput),
+            protein: this.state.protein + parseInt(this.state.proteinInput),
+            fat: this.state.fat + parseInt(this.state.fatInput)
+        }, () => {
+            this.getRecommendations();
+        });
     }
 
-    onPressRecommendation = () => {
-        console.log(`pressed meal recommendation for ${this.state.recommendedMeal}`);
+    handleYup = () => {
+        console.log(`swiped right on meal recommendation for ${this.state.recommendedMeal}`);
         this.props.navigation.navigate('Search', {searchText: this.state.recommendedMeal});
+        return false;
+    }
+
+    handleNope = () => {
+        console.log(`swiped left on meal recommendation for ${this.state.recommendedMeal}`);
+        this.setState({
+          recommendedMeal: this.state.recommendations[this.state.cardPlace + 1].meal,
+          recommendedCalories: this.state.recommendations[this.state.cardPlace + 1].calories,
+          cardPlace: this.state.cardPlace < 10 ? this.state.cardPlace + 1 : 0
+        });
+        return true;
     }
 
     renderModal() {
@@ -281,7 +390,6 @@ export default class Home extends Component {
                     <Image source={require('../assets/divider.png')} />
                 </View>
                 <View style={styles.body}>
-                    <ScrollView>
                         <View style={styles.caloriesRemaining}>
                             <Text style={{color: "#FAF9F5", fontSize: 24, textAlign: "center"}}>
                                 {Number.parseFloat(this.state.calories).toFixed(2)}{`\ncalories\nleft`}
@@ -295,21 +403,24 @@ export default class Home extends Component {
                         <View style={styles.date}>
                             <Text style={{fontSize: 18}}>{this.getDate()}</Text>
                         </View>
-                        <TouchableOpacity
-                            style={styles.recommend}
-                            onPress={this.onPressRecommendation}>
-                            <View style={styles.recommend}>
-                                <Text style={{fontSize: 18, fontWeight: 'bold'}}>recommended meal</Text>
-                                <Text style={{fontSize: 18, paddingTop: 10, paddingBottom: 10}}>{this.state.recommendedMeal}</Text>
-                                <Text style={{fontSize: 14, fontStyle: 'italic'}}>~{this.state.recommendedCalories} calories</Text>
-                            </View>
-                        </TouchableOpacity>
+                        <View style={styles.recommend}>
+                                <SwipeCards
+                                    cards={this.state.recommendations}
+                                    renderCard={(cardData) => <Card {...cardData} />}
+                                    keyExtractor={(cardData) => String(cardData.meal)}
+                                    handleYup={this.handleYup}
+                                    handleNope={this.handleNope}
+                                    showYup={false}
+                                    showNope={false}
+                                    loop={true}
+                                    smoothTransition={true}
+                                />
+                        </View>
                         <View style={styles.activity}>
                             <Text style={{fontSize: 18, fontStyle: 'italic'}}>
                                 activity this week: {this.state.activity}
                             </Text>
                         </View>
-                    </ScrollView>
                     <Modal
                         animationType="fade"
                         transparent={true}
@@ -441,10 +552,14 @@ const styles = StyleSheet.create({
         alignItems:'center', 
         alignSelf: 'center',
         justifyContent:'center',  
+        marginTop: 15,
+        width: 250,
+        height: 100, 
+    },
+    card: {
         backgroundColor:'#FFFFFF',     
         width: 250,
         height: 100, 
-        marginTop: 15,
         borderRadius: 10,
         padding: 15
     },
