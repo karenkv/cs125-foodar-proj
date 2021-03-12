@@ -41,6 +41,7 @@ class Card extends React.Component {
 export default class Home extends Component {
     constructor(props) {
         super(props);
+        this.placeholderTextColor = "#ACACAC";
         this.state = {
             modalVisible: false,
             calories: 0,

@@ -9,6 +9,7 @@ export default class Login extends Component {
 
     constructor(props) {
         super(props);
+        this.placeholderTextColor = "#ACACAC";
         this.state = {
             username: "",
             password: "",
@@ -57,6 +58,7 @@ export default class Login extends Component {
                         placeholder="password"
                         onChangeText={(text) => this.setState({password:text})}
                         placeholderTextColor={this.placeholderTextColor}
+                        secureTextEntry={true}
                     />                    
                 </View>
                 <View style={styles.footer}>
