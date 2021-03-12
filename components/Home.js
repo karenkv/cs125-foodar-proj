@@ -31,7 +31,7 @@ class Card extends React.Component {
       return (
         <View style={styles.card}>
             <Text style={{fontSize: 18, fontWeight: 'bold'}}>recommended meal</Text>
-            <Text style={{fontSize: 18, paddingTop: 10, paddingBottom: 10}}>{this.props.meal}</Text>
+            <Text numberOfLines={1} style={{fontSize: 18, paddingTop: 10, paddingBottom: 10,}}>{this.props.meal}</Text>
             <Text style={{fontSize: 14, fontStyle: 'italic'}}>~{this.props.calories} calories</Text>       
         </View>
       );
