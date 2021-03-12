@@ -84,6 +84,7 @@ export default class Home extends Component {
         await this.getAge();
         await this.getHeight();
         await this.getWeight();
+        let i;
         for(i = 1; i < 8; i++) {
             await this.getSteps(i);
         }
@@ -103,6 +104,7 @@ export default class Home extends Component {
                     console.log("error getting steps: ", err);
                     return;
                 }
+                console.log("steps for ", i, ": ", results.value);
                 this.setState({steps: this.state.steps += results.value}, () => { resolve() });
             });
         });
@@ -115,6 +117,7 @@ export default class Home extends Component {
                     console.log("error getting latest age: ", err);
                     return;
                 }
+                console.log("age: ", results.age);
                 this.setState({age: results.age}, () => { resolve() });
             });
         });
@@ -127,6 +130,7 @@ export default class Home extends Component {
                     console.log("error getting latest age: ", err);
                     return;
                 }
+                console.log("sex: ", results.value);
                 this.setState({sex: results.value}, () => { resolve() });
             });
         });
@@ -139,6 +143,7 @@ export default class Home extends Component {
                     console.log("error getting latest height: ", err);
                     return;
                 }
+                console.log("height: ", results.value);
                 this.setState({height: results.value}, () => { resolve() });
             });
         });
@@ -151,6 +156,7 @@ export default class Home extends Component {
                     console.log("error getting latest weight: ", err);
                     return;
                 }
+                console.log("weight: ", results.value);
                 this.setState({weight: results.value}, () => { resolve() });
             });
         });
@@ -158,6 +164,7 @@ export default class Home extends Component {
 
     getActivity = async () => {
         const steps = this.state.steps / 6;
+        console.log("Activity set");
         return new Promise(resolve => {
             if(steps < 1500) {
                 this.setState({activity: 'very low'}, () => { resolve() });
@@ -175,8 +182,9 @@ export default class Home extends Component {
 
     getBMR = async () => {  
         return new Promise(resolve => {
+            console.log("BMR set");
             if(this.state.sex === 'female') {
-            this.setState({bmr: 
+                this.setState({bmr: 
                     66 + (6.3 * this.state.weight) + (12.9 * this.state.height) - (6.8 * this.state.age)},
                     () => { resolve() });
             } else {
@@ -189,6 +197,7 @@ export default class Home extends Component {
 
     getCalories = async () => {
         return new Promise(resolve => {
+            console.log("Calories set");
             if(this.state.activity === 'very low') {
                 this.setState({calories: this.state.bmr * 1.2}, () => { resolve() });
             } else if(this.state.activity === 'low') {
@@ -207,27 +216,29 @@ export default class Home extends Component {
         return new Promise(resolve => {
                 firestore().collection('user-pref').doc(auth().currentUser.uid).get()
                 .then(documentSnapshot => {
+                    console.log("prefs: ", documentSnapshot.data());
                     this.setState({prefs: documentSnapshot.data()}, () => { resolve() });
                 });
             })
         }
 
-        getRecommendations = async () => {
-            return new Promise(resolve => {
-            calories = this.state.calories;
-            total = this.state.fat + this.state.protein + this.state.carbs;
-            fat_p = total > 0 ? (.3 - (this.state.fat / total)) * 100 : 0;
-            protein_p = total > 0 ? (.2 - (this.state.protein / total)) * 100 : 0;
-            carbs_p = total > 0 ? (.5 - (this.state.carbs / total)) * 100 : 0;
-            prefs = this.state.prefs;
+    getRecommendations = async () => {
+        return new Promise(resolve => {
+            let total = this.state.fat + this.state.protein + this.state.carbs;
+            let fat_p = total > 0 ? (.3 - (this.state.fat / total)) * 100 : 0;
+            let protein_p = total > 0 ? (.2 - (this.state.protein / total)) * 100 : 0;
+            let carbs_p = total > 0 ? (.5 - (this.state.carbs / total)) * 100 : 0;
+            console.log("getting recs");
 
-            food_recs = [];
+            let food_recs = [];
+            let i;
             for(i = 0; i < data.length; i++) {
-                obj = data[i];
-                score = 0.0;
+                let obj = data[i];
+                let score = 0.0;
+                let key;
                 for(key in obj) {
                     if(key === "calories") {
-                        if(obj[key] > calories){
+                        if(obj[key] > this.state.calories){
                             score -= 10.0;
                         }
                     } else if(key === "fat") {
@@ -236,20 +247,22 @@ export default class Home extends Component {
                         score += obj[key] * protein_p;
                     } else if(key === "carbs") {
                         score += obj[key] * carbs_p;
-                    } else if(obj[key] == prefs[key]) {
+                    } else if(obj[key] == this.state.prefs[key]) {
                         score += 10.0
                     }
                 }
                 food_recs.push({"meal": obj["name"], "calories": obj["calories"], "score": score})
             }
+
             food_recs.sort(function(obj1, obj2) {
                 return obj2.score - obj1.score;
             });
+
             console.log("recommendations: ", food_recs.slice(0, 10));
             this.setState({
                 recommendations: food_recs.slice(0, 10),
                 recommendedMeal: food_recs[0].meal,
-                recommendedCalories: food_recs[0].recommendedCalories
+                recommendedCalories: food_recs[0].calories
             }, () => { resolve() });
         });
     }
