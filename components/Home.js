@@ -1,7 +1,7 @@
 'use strict';
 
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, Pressable, Modal, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, Pressable, Modal, TextInput } from 'react-native';
 import Navigation from './Navigation';
 import CustomButton from './CustomButton';
 import AppleHealthKit from 'react-native-health';
@@ -41,6 +41,7 @@ class Card extends React.Component {
 export default class Home extends Component {
     constructor(props) {
         super(props);
+        this.placeholderTextColor = "#ACACAC";
         this.state = {
             modalVisible: false,
             calories: 0,
@@ -102,6 +103,7 @@ export default class Home extends Component {
             AppleHealthKit.getStepCount(dateOpt, (err, results) => {
                 if (err) {
                     console.log("error getting steps: ", err);
+                    this.setState({steps: this.state.steps += 0}, () => { resolve() });
                     return;
                 }
                 console.log("steps for ", i, ": ", results.value);

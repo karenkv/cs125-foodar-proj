@@ -4,6 +4,7 @@ import Navigation from './Navigation';
 import CustomButton from './CustomButton';
 
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 export default class Profile extends Component {
     constructor(props) {
@@ -11,8 +12,23 @@ export default class Profile extends Component {
         this.placeholderTextColor = "#ACACAC";
         this.state = {
             profileImgUri: "https://stylecaster.com/wp-content/uploads/2020/04/blackpink-jennie-kim.jpg",
-            name: "Jennie Kim",
+            name: "",
         };
+    }
+
+    async componentDidMount() {
+        await this.getName();
+    }
+
+    getName = async () => {
+        return new Promise(resolve => {
+                firestore().collection('user-name').doc(auth().currentUser.uid).get()
+                .then(documentSnapshot => {
+                    console.log("name: ", documentSnapshot.data());
+                    this.setState({name: documentSnapshot.data() != undefined 
+                        ? documentSnapshot.data() : "Jennie Kim"}, () => { resolve() });
+                });
+            })
     }
 
     saveProfile() {
@@ -55,12 +71,21 @@ export default class Profile extends Component {
                                 placeholder="password"
                                 placeholderTextColor={this.placeholderTextColor}
                             />
-                            <TextInput 
-                                style={styles.textInput} 
-                                keyboardType="numeric"
-                                placeholder="zipcode"
-                                placeholderTextColor={this.placeholderTextColor}
-                            />
+                            <View style={{width: 150,
+                                borderWidth: 1,
+                                borderRadius: 25,
+                                borderColor: "#D6CBA8",
+                                padding: 5,
+                                margin: 5,
+                                alignSelf: "center",
+                                marginVertical: 12}}>
+                                <Button
+                                    title="preferences"
+     
+                                    color="#D4947C"
+                                    onPress={() => this.props.navigation.navigate('UserPreferencesOnboarding')}
+                                />
+                            </View>
                             <CustomButton 
                                 title="save"
                                 style={{alignSelf: "center", marginVertical: 12}}
@@ -74,12 +99,6 @@ export default class Profile extends Component {
                                 }
                             />
                         </View>
-                    </ScrollView>
-                    <ScrollView>
-                        <Button
-                            title="Preferences"
-                            onPress={() => this.props.navigation.navigate('UserPreferencesOnboarding')}
-                        />
                     </ScrollView>
                 </View>
                 <View style={styles.footer}>
@@ -122,20 +141,20 @@ const styles = StyleSheet.create({
     },
     profileImgContainer: {
         alignSelf: "center",
-        marginVertical: 10,
-        height: 230,
-        width: 230,
+        marginVertical: 5,
+        height: 150,
+        width: 150,
         borderRadius: 150,
         overflow: "hidden",
     },
     profileImg: {
-        height: 230,
-        width: 230,
+        height: 150,
+        width: 150,
         borderRadius: 0,
     },
     nameText: {
         alignSelf: "center",
-        margin: 22,
+        margin: 10,
         padding: 5,
         fontSize: 24,
     },
@@ -153,7 +172,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         alignSelf: "center",
         position: "relative",
-        marginBottom:15,
+        marginBottom:10,
     },
     footer: {
         flex: 0.1,

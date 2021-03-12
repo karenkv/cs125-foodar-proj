@@ -3,14 +3,15 @@ import { Image, StyleSheet, View, Text, TextInput, SafeAreaView, } from 'react-n
 import CustomButton from './CustomButton';
 
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import Toast from 'react-native-toast-message';
-
 
 export default class Signup extends Component {
     constructor(props) {
       super(props);
       this.placeholderTextColor = "#ACACAC";
       this.state = { 
+        name: "",
         username: "",
         password: ""
       }
@@ -29,7 +30,9 @@ export default class Signup extends Component {
       auth()
         .createUserWithEmailAndPassword(this.state.username, this.state.password)
           .then(() => {
+              // firestore().collection('user-name').doc(auth().currentUser.uid).set(this.state.name);
               console.log('User account created & signed in!');
+              this.props.navigation.navigate('UserPreferencesOnboarding');
           })
           .catch(error => {
               if (error.code === 'auth/email-already-in-use') {
@@ -62,6 +65,7 @@ export default class Signup extends Component {
             <TextInput 
               style={styles.textInput} 
               placeholder="full name"
+              onChangeText={(text)=>this.handleChange(text, 'name')}
               placeholderTextColor={this.placeholderTextColor}
             />
             <TextInput 
@@ -75,6 +79,7 @@ export default class Signup extends Component {
               placeholder="password"
               onChangeText={(text)=>this.handleChange(text, 'password')}
               placeholderTextColor={this.placeholderTextColor}
+              secureTextEntry={true}
             />
           </View>
           <View style={styles.bottom}>
@@ -88,9 +93,6 @@ export default class Signup extends Component {
               accessibilityLabel="Click to continue user signup with preferences"
               onPress={() => {
                 this.createUser();
-                if (auth().currentUser != null) {
-                  this.props.navigation.navigate('UserPreferencesOnboarding');
-                }
               }}
             />
           </View>
