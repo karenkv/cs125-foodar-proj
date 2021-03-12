@@ -61,18 +61,19 @@ export default class UserPreferencesOnboarding extends Component {
   constructor(props) {
     super(props);
     const foodPrefOptions = [
-      { text: "dairy", uri: "https://cdn-a.william-reed.com/var/wrbm_gb_food_pharma/storage/images/publications/food-beverage-nutrition/nutraingredients.com/news/research/global-study-links-high-fat-dairy-consumption-to-blood-and-heart-health/11403932-1-eng-GB/Global-study-links-high-fat-dairy-consumption-to-blood-and-heart-health.jpg" },
-      { text: "nuts", uri: "https://selecthealth.org/-/media/selecthealth82/article/post/2017/05/nuts_blog_lg.ashx"},
-      { text: "low-carb", uri: "https://cdn.pixabay.com/photo/2015/01/03/16/56/bread-587597__340.jpg" },
+      { text: "baked goods or gluten", uri: "https://www.bakingbusiness.com/ext/resources/2019/6/OrganicWheat_Lead.jpg?t=1560864223&width=1080"},
+      { text: "dairy and eggs", uri: "https://post.healthline.com/wp-content/uploads/2020/08/AN480-Eggs-Dairy-732x549-thumb.jpg" },
+      { text: "fast food", uri: "https://youngmenshealthsite.org/wp-content/uploads/2015/05/iStock_000016515039Small.jpg" },
       { text: "seafood", uri: "https://miro.medium.com/max/800/1*qa8T3nnBWaMHV63xKS-Abg.jpeg" }, 
-      { text: "red meat", uri: "https://cdn.pixabay.com/photo/2018/02/08/15/01/meat-3139640_1280.jpg" },
-      { text: "vegetarian", uri: "https://cdn.pixabay.com/photo/2016/10/31/18/23/salad-1786327__340.jpg" },
-      { text: "vegan", uri: "https://live.staticflickr.com/7837/47227303852_b36d09aeb8_b.jpg" },
+      { text: "grains and pasta", uri: "https://lh3.googleusercontent.com/proxy/uOdmmsJOzN9JqwMUAEfBSl6t_houh4ik-MR5fA5W2lrbBDbR6hm3yAZHyFE4gJwcE7ZhLGjpqcRF-g19fveghfKDVuFbqLkUT00L1Q" }, 
+      { text: "meat", uri: "https://cdn.pixabay.com/photo/2018/02/08/15/01/meat-3139640_1280.jpg" },
+      { text: "soup", uri: "https://tmbidigitalassetsazure.blob.core.windows.net/rms3-prod/attachments/37/1200x1200/Potluck-Chicken-Vegetable-Soup_EXPS_FT20_15848_F_0110_1.jpg"},
+      { text: "vegetarian", uri: "https://cdn.pixabay.com/photo/2016/10/31/18/23/salad-1786327__340.jpg" }
     ];
 
     var prefInputsInit = new Object;
     for (let item in foodPrefOptions) {
-      prefInputsInit[foodPrefOptions[item].text] = true;
+      prefInputsInit[foodPrefOptions[item].text] = 1;
     }
 
     this.state = {
@@ -99,7 +100,7 @@ export default class UserPreferencesOnboarding extends Component {
 
   handleNope (card) {
     console.log(`dislike for ${card.text}`);
-    const newPrefInputs = { ...this.state.prefInputs, [card.text]: false};
+    const newPrefInputs = { ...this.state.prefInputs, [card.text]: 0};
     this.setState({
       prefInputs: newPrefInputs
     });
