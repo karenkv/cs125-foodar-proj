@@ -3,9 +3,10 @@ import { View, Text, StyleSheet, Image, ScrollView, Pressable, Modal, TextInput,
 import Navigation from './Navigation';
 import CustomButton from './CustomButton';
 import AppleHealthKit from 'react-native-health';
+import SwipeCards from "react-native-swipe-cards-deck";
 import firestore from '@react-native-firebase/firestore';
 import auth from "@react-native-firebase/auth";
-import Config from 'react-native-config';
+import data from '../data/data.json';
 
 
 const DAYS = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
@@ -18,6 +19,22 @@ const options = {
         write: ["Height", "Weight", "StepCount", "BiologicalSex", "DateOfBirth"]
     }
 };
+
+class Card extends React.Component {
+    constructor(props) {
+      super(props);
+    }
+  
+    render() {
+      return (
+        <View style={styles.card}>
+            <Text style={{fontSize: 18, fontWeight: 'bold'}}>recommended meal</Text>
+            <Text style={{fontSize: 18, paddingTop: 10, paddingBottom: 10}}>{this.props.meal}</Text>
+            <Text style={{fontSize: 14, fontStyle: 'italic'}}>~{this.props.calories} calories</Text>       
+        </View>
+      );
+    }
+}
 
 export default class Home extends Component {
     constructor(props) {
@@ -42,7 +59,7 @@ export default class Home extends Component {
             age: 0,
             bmr: 0,
             prefs: {},
-            recommendations: {}
+            recommendations: []
         };
     }
 
@@ -182,16 +199,49 @@ export default class Home extends Component {
     
     getPrefs = async () => {
         return new Promise(resolve => {
-            firestore().collection('user-pref').doc(auth().currentUser.uid).get()
-            .then(documentSnapshot => {
-                console.log(documentSnapshot.data())
-                this.setState({prefs: documentSnapshot.data()}, () => { resolve() });
-            });
-        })
-    }
+                firestore().collection('user-pref').doc(auth().currentUser.uid).get()
+                .then(documentSnapshot => {
+                    this.setState({prefs: documentSnapshot.data()}, () => { resolve() });
+                });
+            })
+        }
 
-    getRecommendations = async () => {
-        
+        getRecommendations = async () => {
+            return new Promise(resolve => {
+            calories = this.state.calories;
+            total = this.state.fat + this.state.protein + this.state.carbs;
+            fat_p = total > 0 ? (.3 - (this.state.fat / total)) * 100 : 0;
+            protein_p = total > 0 ? (.2 - (this.state.protein / total)) * 100 : 0;
+            carbs_p = total > 0 ? (.5 - (this.state.carbs / total)) * 100 : 0;
+            prefs = this.state.prefs;
+
+            food_recs = [];
+            for(i = 0; i < data.length; i++) {
+                obj = data[i];
+                score = 0.0;
+                for(key in obj) {
+                    if(key === "calories") {
+                        if(obj[key] > calories){
+                            score -= 10.0;
+                        }
+                    } else if(key === "fat") {
+                        score += obj[key] * fat_p;
+                    } else if(key === "protein") {
+                        score += obj[key] * protein_p;
+                    } else if(key === "carbs") {
+                        score += obj[key] * carbs_p;
+                    } else if(obj[key] == prefs[key]) {
+                        score += 10.0
+                    }
+                }
+                food_recs.push({"meal": obj["name"], "calories": obj["calories"], "score": score})
+            }
+            food_recs.sort(function(obj1, obj2) {
+                return obj2.score - obj1.score;
+            });
+            console.log("recommendations: ", food_recs.slice(0, 10));
+            this.setState({recommendations: food_recs.slice(0, 10)}, () => { resolve() });
+        });
     }
 
     setModalVisible = (visible) => {
@@ -206,10 +256,14 @@ export default class Home extends Component {
     }
 
     saveMeal() {
-        this.setState({calories: this.state.calories - parseInt(this.state.caloriesInput)});
-        this.setState({carbs: this.state.carbs + parseInt(this.state.carbsInput)});
-        this.setState({protein: this.state.protein + parseInt(this.state.proteinInput)});
-        this.setState({fat: this.state.fat + parseInt(this.state.fatInput)});
+        this.setState({
+            calories: this.state.calories - parseInt(this.state.caloriesInput),
+            carbs: this.state.carbs + parseInt(this.state.carbsInput),
+            protein: this.state.protein + parseInt(this.state.proteinInput),
+            fat: this.state.fat + parseInt(this.state.fatInput)
+        }, () => {
+            this.getRecommendations();
+        });
     }
 
     onPressRecommendation = () => {
