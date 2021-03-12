@@ -1,3 +1,5 @@
+'use strict';
+
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, Pressable, Modal, TextInput, TouchableOpacity } from 'react-native';
 import Navigation from './Navigation';
@@ -49,8 +51,8 @@ export default class Home extends Component {
             carbsInput: 0,
             proteinInput: 0,
             fatInput: 0,
-            recommendedMeal: 'burger',
-            recommendedCalories: 500,
+            recommendedMeal: '',
+            recommendedCalories: 0,
             height: 0,
             weight: 0,
             steps: 0,
@@ -59,8 +61,12 @@ export default class Home extends Component {
             age: 0,
             bmr: 0,
             prefs: {},
-            recommendations: []
+            recommendations: [],
+            cardPlace: 0
         };
+
+        this.handleNope = this.handleNope.bind(this);
+        this.handleYup = this.handleYup.bind(this);
     }
 
     async componentDidMount() {
@@ -240,7 +246,11 @@ export default class Home extends Component {
                 return obj2.score - obj1.score;
             });
             console.log("recommendations: ", food_recs.slice(0, 10));
-            this.setState({recommendations: food_recs.slice(0, 10)}, () => { resolve() });
+            this.setState({
+                recommendations: food_recs.slice(0, 10),
+                recommendedMeal: food_recs[0].meal,
+                recommendedCalories: food_recs[0].recommendedCalories
+            }, () => { resolve() });
         });
     }
 
@@ -266,9 +276,20 @@ export default class Home extends Component {
         });
     }
 
-    onPressRecommendation = () => {
-        console.log(`pressed meal recommendation for ${this.state.recommendedMeal}`);
+    handleYup = () => {
+        console.log(`swiped right on meal recommendation for ${this.state.recommendedMeal}`);
         this.props.navigation.navigate('Search', {searchText: this.state.recommendedMeal});
+        return false;
+    }
+
+    handleNope = () => {
+        console.log(`swiped left on meal recommendation for ${this.state.recommendedMeal}`);
+        this.setState({
+          recommendMeal: this.state.recommendations[this.state.cardPlace + 1].meal,
+          recommendedCalories: this.state.recommendations[this.state.cardPlace + 1].calories,
+          card: this.state.cardPlace < 10 ? this.state.cardPlace + 1 : 0
+        });
+        return true;
     }
 
     renderModal() {
@@ -356,7 +377,6 @@ export default class Home extends Component {
                     <Image source={require('../assets/divider.png')} />
                 </View>
                 <View style={styles.body}>
-                    <ScrollView>
                         <View style={styles.caloriesRemaining}>
                             <Text style={{color: "#FAF9F5", fontSize: 24, textAlign: "center"}}>
                                 {Number.parseFloat(this.state.calories).toFixed(2)}{`\ncalories\nleft`}
@@ -370,21 +390,24 @@ export default class Home extends Component {
                         <View style={styles.date}>
                             <Text style={{fontSize: 18}}>{this.getDate()}</Text>
                         </View>
-                        <TouchableOpacity
-                            style={styles.recommend}
-                            onPress={this.onPressRecommendation}>
-                            <View style={styles.recommend}>
-                                <Text style={{fontSize: 18, fontWeight: 'bold'}}>recommended meal</Text>
-                                <Text style={{fontSize: 18, paddingTop: 10, paddingBottom: 10}}>{this.state.recommendedMeal}</Text>
-                                <Text style={{fontSize: 14, fontStyle: 'italic'}}>~{this.state.recommendedCalories} calories</Text>
-                            </View>
-                        </TouchableOpacity>
+                        <View style={styles.recommend}>
+                                <SwipeCards
+                                    cards={this.state.recommendations}
+                                    renderCard={(cardData) => <Card {...cardData} />}
+                                    keyExtractor={(cardData) => String(cardData.meal)}
+                                    handleYup={this.handleYup}
+                                    handleNope={this.handleNope}
+                                    showYup={false}
+                                    showNope={false}
+                                    loop={true}
+                                    smoothTransition={true}
+                                />
+                        </View>
                         <View style={styles.activity}>
                             <Text style={{fontSize: 18, fontStyle: 'italic'}}>
                                 activity this week: {this.state.activity}
                             </Text>
                         </View>
-                    </ScrollView>
                     <Modal
                         animationType="fade"
                         transparent={true}
@@ -516,10 +539,14 @@ const styles = StyleSheet.create({
         alignItems:'center', 
         alignSelf: 'center',
         justifyContent:'center',  
+        marginTop: 15,
+        width: 250,
+        height: 100, 
+    },
+    card: {
         backgroundColor:'#FFFFFF',     
         width: 250,
         height: 100, 
-        marginTop: 15,
         borderRadius: 10,
         padding: 15
     },
