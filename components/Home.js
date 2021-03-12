@@ -31,7 +31,7 @@ class Card extends React.Component {
       return (
         <View style={styles.card}>
             <Text style={{fontSize: 18, fontWeight: 'bold'}}>recommended meal</Text>
-            <Text style={{fontSize: 18, paddingTop: 10, paddingBottom: 10}}>{this.props.meal}</Text>
+            <Text numberOfLines={1} style={{fontSize: 18, paddingTop: 10, paddingBottom: 10,}}>{this.props.meal}</Text>
             <Text style={{fontSize: 14, fontStyle: 'italic'}}>~{this.props.calories} calories</Text>       
         </View>
       );
@@ -300,9 +300,9 @@ export default class Home extends Component {
     handleNope = () => {
         console.log(`swiped left on meal recommendation for ${this.state.recommendedMeal}`);
         this.setState({
-          recommendMeal: this.state.recommendations[this.state.cardPlace + 1].meal,
+          recommendedMeal: this.state.recommendations[this.state.cardPlace + 1].meal,
           recommendedCalories: this.state.recommendations[this.state.cardPlace + 1].calories,
-          card: this.state.cardPlace < 10 ? this.state.cardPlace + 1 : 0
+          cardPlace: this.state.cardPlace < 10 ? this.state.cardPlace + 1 : 0
         });
         return true;
     }

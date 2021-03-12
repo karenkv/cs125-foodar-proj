@@ -31,25 +31,29 @@ Although we used Figma to create mockups, they served more as inspiration and ou
 ### Views
 
 #### Login/Sign Up Views
-- [ ] Set up both user flows
+- [X] Login View
+- [X] Sign up View
+- [X] Save users to Firebase 
+- [X] Authenticate users through Firebase 
 
 #### Home View
-* [ ] Figure out what data to show
+* [X] iOS Health Kit API integration to show user information and health
+* [X] Add meal modal
 
 #### Recommendation/Search View
-* [ ] Figure out how to recommend based on current user information
+* [X] Recommend food based on current user location
+* [X] Recommend food based on current user diet
+* [X] Google Maps API/Geolocation Integration
 
-#### Profile View
-* [ ] Ability to update user information
+#### User Profile View
+* [X] User view
+* [X] User preferences
 
 ### Data Collection
-
-#### Machine Learning
-* [ ] Determine which machine learning algorithm(s) to use
-
-#### Collection
-* [ ] Gather from wearble devices
-* [ ] Gather from user input
+* [X] Gather from wearble devices
+* [X] Gather from user input
+* [X] Gather from food nutrition websites
+* [X] Data manipulation
 
 ## Authors
 Created by [@karenkv](https://github.com/karenkv), [@rebeckur](https://github.com/rebeckur), and [@areeta](https://github.com/areeta) for CS 125 (W21)
