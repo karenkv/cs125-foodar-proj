@@ -42,20 +42,18 @@ Although we used Figma to create mockups, they served more as inspiration and ou
 
 #### Recommendation/Search View
 * [X] Recommend food based on current user location
-* [X] Google Maps API/Geolocation Integration
 * [X] Recommend food based on current user diet
+* [X] Google Maps API/Geolocation Integration
 
 #### User Profile View
 * [X] User view
 * [X] User preferences
 
 ### Data Collection
-* [X] Data manipulation
-* [X] Machine learning
-
-#### Collection
 * [X] Gather from wearble devices
 * [X] Gather from user input
+* [X] Gather from food nutrition websites
+* [X] Data manipulation
 
 ## Authors
 Created by [@karenkv](https://github.com/karenkv), [@rebeckur](https://github.com/rebeckur), and [@areeta](https://github.com/areeta) for CS 125 (W21)
