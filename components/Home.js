@@ -1,7 +1,7 @@
 'use strict';
 
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, Pressable, Modal, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, Pressable, Modal, TextInput } from 'react-native';
 import Navigation from './Navigation';
 import CustomButton from './CustomButton';
 import AppleHealthKit from 'react-native-health';
