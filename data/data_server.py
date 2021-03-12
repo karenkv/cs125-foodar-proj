@@ -36,16 +36,25 @@ def get_recommendation():
 
     # Getting user preferences
     pref = request.args['pref'].values()
+    pref = list(pref.values())
 
     food_recs = {}
     for k,v in data.items():
-        score = 0
-        for i, value in enumerate(v[-4:]):
-            if pref[i] == value:
-                score += 1
-        food_recs[k] = score
-            
-    return jsonify(food_recs)
+        score = 0.0
+        for i, value in enumerate(v[:-4]):
+            if int(value) == int(pref[i]):
+                score += 10.0
+        if(float(v[8]) > calories):
+            score -= 10.0
+        else:
+            score += float(v[8]) / 10.0
+        score += float(v[9]) * fat_p
+        score += float(v[10]) * protein_p
+        score += float(v[11]) * carbs_p
+        food_recs[k] = {'calories': float(v[8]), 'score': score}
+    food_recs = dict(sorted(food_recs.items(), key=lambda item: -item[1]['score'])[0:10])
+
+    return {'food_recs': food_recs}
 
 @app.route('/test')
 def test():
@@ -77,7 +86,7 @@ def test():
         food_recs[k] = {'calories': float(v[8]), 'score': score}
     food_recs = dict(sorted(food_recs.items(), key=lambda item: -item[1]['score'])[0:10])
 
-    return {'pref': pref, 'food_recs': food_recs}
+    return {'food_recs': food_recs}
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
