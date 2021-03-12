@@ -298,9 +298,9 @@ export default class Home extends Component {
     handleNope = () => {
         console.log(`swiped left on meal recommendation for ${this.state.recommendedMeal}`);
         this.setState({
-          recommendMeal: this.state.recommendations[this.state.cardPlace + 1].meal,
+          recommendedMeal: this.state.recommendations[this.state.cardPlace + 1].meal,
           recommendedCalories: this.state.recommendations[this.state.cardPlace + 1].calories,
-          card: this.state.cardPlace < 10 ? this.state.cardPlace + 1 : 0
+          cardPlace: this.state.cardPlace < 10 ? this.state.cardPlace + 1 : 0
         });
         return true;
     }
