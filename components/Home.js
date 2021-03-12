@@ -3,6 +3,9 @@ import { View, Text, StyleSheet, Image, ScrollView, Pressable, Modal, TextInput,
 import Navigation from './Navigation';
 import CustomButton from './CustomButton';
 import AppleHealthKit from 'react-native-health';
+import firestore from '@react-native-firebase/firestore';
+import auth from "@react-native-firebase/auth";
+import Config from 'react-native-config';
 
 
 const DAYS = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
@@ -37,7 +40,9 @@ export default class Home extends Component {
             activity: '',
             sex: '',
             age: 0,
-            bmr: 0
+            bmr: 0,
+            prefs: {},
+            recommendations: {}
         };
     }
 
@@ -62,9 +67,11 @@ export default class Home extends Component {
         await this.getActivity();
         await this.getBMR();
         await this.getCalories();
+        await this.getPrefs();
+        await this.getRecommendations();
     }
 
-    getSteps = (i) => {
+    getSteps = async (i) => {
         return new Promise(resolve => {
             let d = new Date();
             const dateOpt = {date: new Date(d.setDate(d.getDate() - i)).toISOString()};
@@ -78,7 +85,7 @@ export default class Home extends Component {
         });
     }
 
-    getAge = () => {
+    getAge = async () => {
         return new Promise(resolve => {
             AppleHealthKit.getDateOfBirth(null, (err, results) => {
                 if (err) {
@@ -90,7 +97,7 @@ export default class Home extends Component {
         });
     }
 
-    getSex = () => {
+    getSex = async () => {
         return new Promise(resolve => {
             AppleHealthKit.getBiologicalSex(null, (err, results) => {
                 if (err) {
@@ -102,7 +109,7 @@ export default class Home extends Component {
         });
     }
 
-    getHeight = () => {
+    getHeight = async () => {
         return new Promise(resolve => {
             AppleHealthKit.getLatestHeight(null, (err, results) => {
                 if (err) {
@@ -114,7 +121,7 @@ export default class Home extends Component {
         });
     }
 
-    getWeight = () => {
+    getWeight = async () => {
         return new Promise(resolve => {
             AppleHealthKit.getLatestWeight(null, (err, results) => {
                 if (err) {
@@ -126,7 +133,7 @@ export default class Home extends Component {
         });
     }
 
-    getActivity = () => {
+    getActivity = async () => {
         const steps = this.state.steps / 6;
         return new Promise(resolve => {
             if(steps < 1500) {
@@ -143,7 +150,7 @@ export default class Home extends Component {
         });
     }
 
-    getBMR = () => {  
+    getBMR = async () => {  
         return new Promise(resolve => {
             if(this.state.sex === 'female') {
             this.setState({bmr: 
@@ -157,7 +164,7 @@ export default class Home extends Component {
         });
     }
 
-    getCalories = () => {
+    getCalories = async () => {
         return new Promise(resolve => {
             if(this.state.activity === 'very low') {
                 this.setState({calories: this.state.bmr * 1.2}, () => { resolve() });
@@ -171,6 +178,20 @@ export default class Home extends Component {
                 this.setState({calories: this.state.bmr * 1.9}, () => { resolve() });
             }
         });
+    }
+    
+    getPrefs = async () => {
+        return new Promise(resolve => {
+            firestore().collection('user-pref').doc(auth().currentUser.uid).get()
+            .then(documentSnapshot => {
+                console.log(documentSnapshot.data())
+                this.setState({prefs: documentSnapshot.data()}, () => { resolve() });
+            });
+        })
+    }
+
+    getRecommendations = async () => {
+        
     }
 
     setModalVisible = (visible) => {

@@ -20,6 +20,7 @@ export default class Login extends Component {
             .signInWithEmailAndPassword(this.state.username, this.state.password)
                 .then(() => {
                     console.log('User account recognized and signed in!');
+                    this.props.navigation.navigate('Home');
                 })
                 .catch(error => {
                     if (error.code === 'auth/invalid-email') {
@@ -68,9 +69,6 @@ export default class Login extends Component {
                         title="login"
                         onPress={() => {
                             this.login();
-                            if (auth().currentUser != null) {
-                                this.props.navigation.navigate('Home');
-                            }
                         }}
                         accessibilityLabel="Click to submit login information"
                     />
