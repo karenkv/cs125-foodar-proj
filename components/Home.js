@@ -103,6 +103,7 @@ export default class Home extends Component {
             AppleHealthKit.getStepCount(dateOpt, (err, results) => {
                 if (err) {
                     console.log("error getting steps: ", err);
+                    this.setState({steps: this.state.steps += 0}, () => { resolve() });
                     return;
                 }
                 console.log("steps for ", i, ": ", results.value);
